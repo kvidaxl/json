@@ -1,0 +1,1004 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Prompt Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #94157B;
+            --primary-hover: #2e5eff;
+            --success-color: #94157B;
+            --success-hover: #218838;
+            --error-color: #dc3545;
+            --bg-light: #f9f9fb;
+            --bg-white: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #333333;
+            --text-light: #666;
+            --border-radius: 8px;
+            --border-radius-sm: 4px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 24px;
+            background-color: var(--bg-light);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .container {
+            background: var(--bg-white);
+            padding: 32px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            font-weight: 700;
+            font-size: 2rem;
+            background-color: #f3daf5;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .section {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            background: var(--bg-white);
+        }
+
+        .section h3 {
+            margin: 0 0 20px 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: var(--bg-white);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(148, 21, 123, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Variable tag styling */
+        .variable-tag {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: var(--border-radius-sm);
+            margin-left: 8px;
+        }
+
+        /* Variable color system */
+        .var-style, .variable-tag.style {
+            color: #2e7d32;
+            background-color: #e8f5e8;
+        }
+
+        .var-product_description, .variable-tag.product_description {
+            color: #1565c0;
+            background-color: #e3f2fd;
+        }
+
+        .var-category, .variable-tag.category {
+            color: #7b1fa2;
+            background-color: #f3e5f5;
+        }
+
+        .var-preservation, .variable-tag.preservation {
+            color: #d32f2f;
+            background-color: #ffebee;
+        }
+
+        .var-color, .variable-tag.color {
+            color: #f57c00;
+            background-color: #fff3e0;
+        }
+
+        .var-setting, .variable-tag.setting {
+            color: #00796b;
+            background-color: #e0f2f1;
+        }
+
+        .var-scene_elements, .variable-tag.scene_elements {
+            color: #5d4037;
+            background-color: #efebe9;
+        }
+
+        .var-remove, .variable-tag.remove {
+            color: #c2185b;
+            background-color: #fce4ec;
+        }
+
+        .var-lighting, .variable-tag.lighting {
+            color: #f9a825;
+            background-color: #fffde7;
+        }
+
+        .var-camera_view, .variable-tag.camera_view {
+            color: #455a64;
+            background-color: #eceff1;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-hover);
+        }
+
+        .output {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .json-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            line-height: 1.4;
+            letter-spacing: 0.5px;
+        }
+
+        .text-output {
+            background: #f8f9fa;
+            color: var(--text-color);
+            font-family: inherit;
+            border: 2px solid var(--primary-color);
+            font-weight: 700;
+        }
+
+        /* JSON syntax highlighting */
+        .json-key { color: #f97316; font-weight: 600; }
+        .json-string { color: #13aa52; }
+        .json-number { color: #4b8e8d; }
+        .json-boolean { color: #ef4444; font-weight: 600; }
+        .json-null { color: #9ca3af; font-style: italic; }
+        .json-objectid { color: #a78bfa; font-weight: 500; }
+        .json-date { color: #60a5fa; }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-row .field {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .message {
+            padding: 16px;
+            border-radius: var(--border-radius-sm);
+            margin: 16px 0;
+            font-weight: 500;
+            border-left: 4px solid;
+        }
+
+        .message.error {
+            color: var(--error-color);
+            background-color: #f8d7da;
+            border-left-color: var(--error-color);
+        }
+
+        .message.success {
+            color: var(--success-color);
+            background-color: #d4edda;
+            border-left-color: var(--success-color);
+        }
+
+        .field-invalid {
+            border-color: var(--error-color) !important;
+            background-color: #fff5f5 !important;
+        }
+
+        .field-valid {
+            border-color: var(--success-color) !important;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            body { 
+                padding: 16px; 
+            }
+            
+            .container { 
+                padding: 20px; 
+            }
+            
+            .buttons { 
+                flex-direction: column; 
+            }
+            
+            button { 
+                justify-content: center; 
+            }
+            
+            .form-row { 
+                flex-direction: column; 
+            }
+            
+            .form-row .field { 
+                min-width: 100%; 
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>JSON Prompt Generator</h1>
+
+        <div class="section">
+            <h3>Prompt Variables</h3>
+
+            <div class="form-row">
+                <div class="field">
+                    <label for="style">
+                        Style Keyword
+                        <span class="variable-tag style">&lt;style&gt;</span>
+                    </label>
+                    <select id="style">
+                        <option value="Modern">Modern</option>
+                        <option value="Scandinavian">Scandinavian</option>
+                        <option value="Modern Nordic">Modern Nordic</option>
+                        <option value="Scandinavian Minimalist">Scandinavian Minimalist</option>
+                        <option value="Light Industrial">Light Industrial</option>
+                        <option value="American Farmhouse">American Farmhouse</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="category">
+                        Category
+                        <span class="variable-tag category">&lt;category&gt;</span>
+                    </label>
+                    <select id="category">
+                        <option value="Beds">Beds</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="product_description">
+                    Product Description
+                    <span class="variable-tag product_description">&lt;product_description&gt;</span>
+                </label>
+                <input type="text" id="product_description" value="Single bed + double bed (with headboard)" placeholder="Enter product description" maxlength="200">
+            </div>
+
+            <div class="field">
+                <label for="preservation">
+                    Preservation Instructions
+                    <span class="variable-tag preservation">&lt;preservation&gt;</span>
+                </label>
+                <textarea id="preservation" maxlength="1000">Absolutely do not alter the bed in any way.  
+Its geometry, structure, length-to-width ratio, height, leg spacing, headboard design, material surface texture, wood grain or fabric pattern, and original color must remain 100% unchanged.  
+No smoothing, stylizing, color shifting, retexturing, or proportion editing is allowed.</textarea>
+            </div>
+
+            <div class="field">
+                <label for="color">
+                    Color Harmony
+                    <span class="variable-tag color">&lt;color&gt;</span>
+                </label>
+                <textarea id="color" maxlength="500">the overall room decor should adapt to the bed's color, ensuring everything complements the original design without altering the bed</textarea>
+            </div>
+
+            <div class="field">
+                <label for="setting">
+                    Setting
+                    <span class="variable-tag setting">&lt;setting&gt;</span>
+                </label>
+                <textarea id="setting" maxlength="500">ultra-bright and airy bedroom with pure white walls and pale wood flooring</textarea>
+            </div>
+
+            <div class="field">
+                <label for="scene_elements">
+                    Scene Elements
+                    <span class="variable-tag scene_elements">&lt;scene_elements&gt;</span>
+                </label>
+                <textarea id="scene_elements" style="min-height: 120px;" maxlength="1000">- Two matching minimalist bedside tables (white or neutral tone), symmetrically placed beside the bed
+- One large rectangular neutral-tone rug (cream, beige, or light gray), centered precisely under the bed and extending beyond its edges
+- Two abstract framed artworks centered directly above the headboard, in soft neutral colors
+- Sheer white or beige curtains, softly lit
+- (Optional) One tall indoor potted plant in the back corner, in a white or stone-colored ceramic pot</textarea>
+            </div>
+
+            <div class="field">
+                <label for="remove">
+                    Remove
+                    <span class="variable-tag remove">&lt;remove&gt;</span>
+                </label>
+                <input type="text" id="remove" value="decorative throw pillows, footstools, window sill plants, bright-colored accents" maxlength="300">
+            </div>
+
+            <div class="field">
+                <label for="lighting">
+                    Lighting
+                    <span class="variable-tag lighting">&lt;lighting&gt;</span>
+                </label>
+                <textarea id="lighting" maxlength="500">extremely bright natural daylight filling the room — soft yet intense, with well-defined soft shadows and high overall ambient brightness</textarea>
+            </div>
+
+            <div class="field">
+                <label for="camera_view">
+                    Camera View
+                    <span class="variable-tag camera_view">&lt;camera_view&gt;</span>
+                </label>
+                <select id="camera_view">
+                    <option value="front-centered perspective, highlighting the overall bed design and symmetry">front-centered perspective, highlighting the overall bed design and symmetry</option>
+                    <option value="front view from above">front view from above</option>
+                    <option value="slightly front-left perspective">slightly front-left perspective</option>
+                    <option value="30-degree front-left perspective">30-degree front-left perspective</option>
+                    <option value="45-degree front-left perspective">45-degree front-left perspective</option>
+                    <option value="slightly front-right perspective">slightly front-right perspective</option>
+                    <option value="30-degree front-right perspective">30-degree front-right perspective</option>
+                    <option value="45-degree front-right perspective">45-degree front-right perspective</option>
+                    <option value="direct left-side perspective, showing full side structure">direct left-side perspective, showing full side structure</option>
+                    <option value="direct right-side perspective, showing full side structure">direct right-side perspective, showing full side structure</option>
+                    <option value="slightly rear view">slightly rear view</option>
+                    <option value="top-down view">top-down view</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Prompt Template</h3>
+            <div class="field">
+                <label for="prompt_template">Template:</label>
+                <textarea id="prompt_template" style="min-height: 150px;" maxlength="2000">Generate a <style>-style bedroom interior scene featuring the exact same product: a <product_description>, <category> against the wall.
+
+<preservation>
+
+Style: <style>
+
+Color harmony: <color>
+Setting: <setting>
+
+Scene Elements: <scene_elements>
+
+Remove: <remove>
+Lighting: <lighting>
+
+Camera view: <camera_view></textarea>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-primary" onclick="app.generateOutput()">Generate Output</button>
+            <button class="btn-success" onclick="app.copyToClipboard('json')">Copy JSON</button>
+            <button class="btn-success" onclick="app.copyToClipboard('text')">Copy Text</button>
+        </div>
+
+        <div id="message-container"></div>
+
+        <h3>JSON Output</h3>
+        <div class="output json-output" id="json-output">Click "Generate Output" to create your configuration...</div>
+
+        <h3>Text Prompt Preview</h3>
+        <div class="output text-output" id="text-output">Click "Generate Output" to create your text prompt...</div>
+    </div>
+
+    <script>
+        class PromptGenerator {
+            constructor() {
+                this.config = {
+                    MAX_INPUT_LENGTH: 5000,
+                    AUTO_GENERATE_DELAY: 500,
+                    VALIDATION_RULES: {
+                        product_description: { required: true, minLength: 3, maxLength: 200 },
+                        category: { required: true },
+                        prompt_template: { required: true, minLength: 10, maxLength: 2000 },
+                        preservation: { maxLength: 1000 },
+                        color: { maxLength: 500 },
+                        setting: { maxLength: 500 },
+                        scene_elements: { maxLength: 1000 },
+                        remove: { maxLength: 300 },
+                        lighting: { maxLength: 500 }
+                    }
+                };
+
+                this.variableColors = {
+                    'style': 'var-style',
+                    'product_description': 'var-product_description',
+                    'category': 'var-category',
+                    'preservation': 'var-preservation',
+                    'color': 'var-color',
+                    'setting': 'var-setting',
+                    'scene_elements': 'var-scene_elements',
+                    'remove': 'var-remove',
+                    'lighting': 'var-lighting',
+                    'camera_view': 'var-camera_view'
+                };
+
+                this.state = {
+                    cleanJSON: '',
+                    cleanText: '',
+                    timeouts: new Set()
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.generateOutput();
+                this.setupKeyboardShortcuts();
+            }
+
+            // Security and validation utilities
+            sanitizeInput(input) {
+                if (input == null) return '';
+
+                const xssPatterns = [
+                    /<script[\s\S]*?<\/script>/gi,
+                    /<iframe[\s\S]*?<\/iframe>/gi,
+                    /javascript:/gi,
+                    /on\w+\s*=/gi,
+                    /vbscript:/gi
+                ];
+
+                let sanitized = String(input).trim();
+                sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
+                xssPatterns.forEach(pattern => {
+                    sanitized = sanitized.replace(pattern, '');
+                });
+
+                return sanitized.length > this.config.MAX_INPUT_LENGTH
+                    ? sanitized.substring(0, this.config.MAX_INPUT_LENGTH)
+                    : sanitized;
+            }
+
+            validateInput(fieldId, value) {
+                const rules = this.config.VALIDATION_RULES[fieldId];
+                if (!rules) return { valid: true };
+
+                const sanitizedValue = this.sanitizeInput(value);
+
+                if (rules.required && !sanitizedValue.trim()) {
+                    return { 
+                        valid: false, 
+                        error: `${this.getFieldDisplayName(fieldId)} is required.` 
+                    };
+                }
+
+                if (!sanitizedValue && !rules.required) return { valid: true };
+
+                if (rules.minLength && sanitizedValue.length < rules.minLength) {
+                    return { 
+                        valid: false, 
+                        error: `${this.getFieldDisplayName(fieldId)} must be at least ${rules.minLength} characters.` 
+                    };
+                }
+
+                if (rules.maxLength && sanitizedValue.length > rules.maxLength) {
+                    return { 
+                        valid: false, 
+                        error: `${this.getFieldDisplayName(fieldId)} must not exceed ${rules.maxLength} characters.` 
+                    };
+                }
+
+                return { valid: true };
+            }
+
+            getFieldDisplayName(fieldId) {
+                const names = {
+                    product_description: 'Product Description',
+                    category: 'Category',
+                    prompt_template: 'Prompt Template',
+                    preservation: 'Preservation Instructions',
+                    color: 'Color Harmony',
+                    setting: 'Setting',
+                    scene_elements: 'Scene Elements',
+                    remove: 'Remove',
+                    lighting: 'Lighting'
+                };
+                return names[fieldId] || fieldId.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            }
+
+            // Utility functions
+            debounce(func, wait) {
+                let timeout;
+                return (...args) => {
+                    if (timeout) {
+                        clearTimeout(timeout);
+                        this.state.timeouts.delete(timeout);
+                    }
+                    timeout = setTimeout(() => {
+                        func.apply(this, args);
+                        this.state.timeouts.delete(timeout);
+                    }, wait);
+                    this.state.timeouts.add(timeout);
+                };
+            }
+
+            generateObjectId() {
+                const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
+                const chars = '0123456789abcdef';
+                let randomPart = '';
+                
+                for (let i = 0; i < 16; i++) {
+                    randomPart += chars[Math.floor(Math.random() * 16)];
+                }
+
+                return timestamp + randomPart;
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = String(text || '');
+                return div.innerHTML;
+            }
+
+            escapeRegExp(string) {
+                return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            // UI management
+            showMessage(message, type = 'error') {
+                const container = document.getElementById('message-container');
+                if (!container) return;
+
+                container.innerHTML = `<div class="message ${type}">${this.escapeHtml(message)}</div>`;
+
+                const timeoutId = setTimeout(() => {
+                    if (container.innerHTML.includes(this.escapeHtml(message))) {
+                        container.innerHTML = '';
+                    }
+                    this.state.timeouts.delete(timeoutId);
+                }, 5000);
+                this.state.timeouts.add(timeoutId);
+            }
+
+            clearMessages() {
+                const container = document.getElementById('message-container');
+                if (container) container.innerHTML = '';
+            }
+
+            updateFieldValidation(fieldId, isValid) {
+                const element = document.getElementById(fieldId);
+                if (!element) return;
+
+                element.classList.remove('field-invalid', 'field-valid');
+                if (isValid !== undefined) {
+                    element.classList.add(isValid ? 'field-valid' : 'field-invalid');
+                }
+            }
+
+            // Content highlighting
+            highlightJson(jsonStr) {
+                if (!jsonStr) return '';
+
+                let highlighted = this.escapeHtml(jsonStr);
+
+                const patterns = [
+                    [/^(\s*)("(?:[^"\\]|\\.)*")(\s*:\s*)/gm, '$1<span class="json-key">$2</span>$3'],
+                    [/:\s*("(?:[^"\\]|\\.)*")([,\s\n\r\}]*)/g, ': <span class="json-string">$1</span>$2'],
+                    [/:\s*(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)([,\s\n\r\}]*)/g, ': <span class="json-number">$1</span>$2'],
+                    [/:\s*(true|false)([,\s\n\r\}]*)/g, ': <span class="json-boolean">$1</span>$2'],
+                    [/:\s*(null)([,\s\n\r\}]*)/g, ': <span class="json-null">$1</span>$2'],
+                    [/("\$oid":\s*)("(?:[^"\\]|\\.)*")/g, '$1<span class="json-objectid">$2</span>'],
+                    [/("\$date":\s*)("(?:[^"\\]|\\.)*")/g, '$1<span class="json-date">$2</span>']
+                ];
+
+                patterns.forEach(([pattern, replacement]) => {
+                    highlighted = highlighted.replace(pattern, replacement);
+                });
+
+                return highlighted;
+            }
+
+            highlightText(text, values) {
+                if (!text || !values) return this.escapeHtml(text || '');
+
+                let highlighted = this.escapeHtml(text);
+
+                const sortedEntries = Object.entries(values)
+                    .filter(([key, value]) => value && String(value).trim() && this.variableColors[key])
+                    .sort(([, a], [, b]) => String(b).length - String(a).length);
+
+                sortedEntries.forEach(([key, value]) => {
+                    const escapedValue = this.escapeHtml(this.sanitizeInput(value));
+                    if (!escapedValue) return;
+
+                    const pattern = new RegExp(this.escapeRegExp(escapedValue), 'g');
+                    highlighted = highlighted.replace(pattern, `<span class="${this.variableColors[key]}">${escapedValue}</span>`);
+                });
+
+                return highlighted;
+            }
+
+            // Core functionality
+            generateOutput() {
+                try {
+                    this.clearMessages();
+
+                    const formData = this.getFormData();
+                    if (!formData) return;
+
+                    const jsonData = this.createJsonData(formData);
+                    const textPrompt = this.createTextPrompt(formData);
+
+                    this.updateOutputs(jsonData, textPrompt, formData);
+                } catch (error) {
+                    console.error('Generation error:', error);
+                    this.showMessage(`Generation failed: ${error.message}`);
+                    this.resetOutputs();
+                }
+            }
+
+            getFormData() {
+                const fields = [
+                    'product_description', 'category', 'preservation', 'camera_view',
+                    'color', 'style', 'lighting', 'scene_elements', 'remove',
+                    'setting', 'prompt_template'
+                ];
+
+                const values = {};
+                const errors = [];
+
+                fields.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (!element) {
+                        console.warn(`Missing form element: ${id}`);
+                        return;
+                    }
+
+                    const sanitized = this.sanitizeInput(element.value);
+                    const validation = this.validateInput(id, sanitized);
+
+                    values[id] = sanitized;
+                    this.updateFieldValidation(id, validation.valid);
+
+                    if (!validation.valid) errors.push(validation.error);
+                });
+
+                if (errors.length > 0) {
+                    this.showMessage(`Validation errors: ${errors.join(' ')}`);
+                    return null;
+                }
+
+                return values;
+            }
+
+            createJsonData(values) {
+                return {
+                    "_id": { "$oid": this.generateObjectId() },
+                    "name": values.product_description || "Untitled",
+                    "category": values.category || "General",
+                    "ai_type": "flux",
+                    "prompt_parameters": {
+                        "preservation": values.preservation || "",
+                        "camera_view": values.camera_view || "",
+                        "color": values.color || "",
+                        "style": values.style || "",
+                        "product_description": values.product_description || "",
+                        "lighting": values.lighting || "",
+                        "scene_elements": values.scene_elements || "",
+                        "remove": values.remove || "",
+                        "setting": values.setting || ""
+                    },
+                    "prompt_template": values.prompt_template || "",
+                    "createdAt": { "$date": new Date().toISOString() },
+                    "updatedAt": { "$date": new Date().toISOString() },
+                    "_class": "com.vidaxl.platformai.image.generation.domain.ImageGenerationPrompt"
+                };
+            }
+
+            createTextPrompt(values) {
+                const replacements = {
+                    '<style>': values.style || '',
+                    '<product_description>': values.product_description || '',
+                    '<category>': values.category || '',
+                    '<preservation>': values.preservation || '',
+                    '<color>': values.color || '',
+                    '<setting>': values.setting || '',
+                    '<scene_elements>': values.scene_elements || '',
+                    '<remove>': values.remove || '',
+                    '<lighting>': values.lighting || '',
+                    '<camera_view>': values.camera_view || ''
+                };
+
+                let textPrompt = values.prompt_template || '';
+                Object.entries(replacements).forEach(([placeholder, value]) => {
+                    if (value.trim()) {
+                        const regex = new RegExp(this.escapeRegExp(placeholder), 'g');
+                        textPrompt = textPrompt.replace(regex, value);
+                    }
+                });
+
+                return textPrompt;
+            }
+
+            updateOutputs(jsonData, textPrompt, values) {
+                try {
+                    this.state.cleanJSON = JSON.stringify(jsonData, null, 2);
+                    this.state.cleanText = textPrompt;
+
+                    const jsonOutput = document.getElementById('json-output');
+                    const textOutput = document.getElementById('text-output');
+
+                    if (jsonOutput) {
+                        jsonOutput.innerHTML = this.highlightJson(this.state.cleanJSON);
+                    }
+
+                    if (textOutput) {
+                        textOutput.innerHTML = this.highlightText(textPrompt, values);
+                    }
+                } catch (error) {
+                    console.error('Output update error:', error);
+                    this.showMessage('Failed to update outputs');
+                }
+            }
+
+            resetOutputs() {
+                this.state.cleanJSON = '';
+                this.state.cleanText = '';
+
+                const elements = ['json-output', 'text-output'];
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = 'Error generating output. Please check your inputs and try again.';
+                    }
+                });
+            }
+
+            // Clipboard functionality
+            async copyToClipboard(type) {
+                try {
+                    const textToCopy = type === 'json' ? this.state.cleanJSON : this.state.cleanText;
+
+                    if (!textToCopy || !textToCopy.trim()) {
+                        this.showMessage('Please generate output first before copying!');
+                        return;
+                    }
+
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(textToCopy);
+                    } else {
+                        this.fallbackCopyToClipboard(textToCopy);
+                    }
+
+                    this.showMessage(`${type.toUpperCase()} copied to clipboard!`, 'success');
+                } catch (error) {
+                    console.error('Copy failed:', error);
+                    this.showMessage('Copy failed. Please select and copy manually.');
+                }
+            }
+
+            fallbackCopyToClipboard(text) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+                textArea.setAttribute('readonly', 'readonly');
+
+                document.body.appendChild(textArea);
+                try {
+                    textArea.select();
+                    textArea.setSelectionRange(0, 99999);
+                    if (!document.execCommand('copy')) {
+                        throw new Error('Fallback copy failed');
+                    }
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+
+            // Event management
+            setupEventListeners() {
+                const inputs = document.querySelectorAll('input, select, textarea');
+                const debouncedGenerate = this.debounce(() => this.generateOutput(), this.config.AUTO_GENERATE_DELAY);
+
+                inputs.forEach(input => {
+                    const eventHandler = () => {
+                        this.clearMessages();
+
+                        if (input.id && this.config.VALIDATION_RULES[input.id]) {
+                            const validation = this.validateInput(input.id, input.value);
+                            this.updateFieldValidation(input.id, validation.valid);
+                        }
+
+                        debouncedGenerate();
+                    };
+
+                    ['input', 'change'].forEach(eventType => {
+                        input.addEventListener(eventType, eventHandler);
+                    });
+
+                    // Security: sanitize pasted content
+                    input.addEventListener('paste', () => {
+                        setTimeout(() => {
+                            const sanitized = this.sanitizeInput(input.value);
+                            if (sanitized !== input.value) {
+                                input.value = sanitized;
+                                this.showMessage('Pasted content was sanitized for security.', 'success');
+                            }
+                        }, 10);
+                    });
+                });
+            }
+
+            setupKeyboardShortcuts() {
+                const shortcuts = {
+                    'g': () => this.generateOutput(),
+                    'j': () => this.copyToClipboard('json'),
+                    't': () => this.copyToClipboard('text')
+                };
+
+                document.addEventListener('keydown', (event) => {
+                    if ((event.ctrlKey || event.metaKey) && shortcuts[event.key.toLowerCase()]) {
+                        event.preventDefault();
+                        shortcuts[event.key.toLowerCase()]();
+                    }
+                });
+            }
+
+            // Cleanup
+            cleanup() {
+                this.state.timeouts.forEach(timeoutId => {
+                    clearTimeout(timeoutId);
+                });
+                this.state.timeouts.clear();
+            }
+        }
+
+        // Application initialization
+        let app;
+        
+        const initializeApp = () => {
+            try {
+                app = new PromptGenerator();
+            } catch (error) {
+                console.error('Failed to initialize app:', error);
+                document.body.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #d32f2f;">
+                        <h2>Application Error</h2>
+                        <p>Failed to initialize. Please refresh the page.</p>
+                        <p style="font-size: 12px; color: #666;">Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        };
+
+        // Error handling
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+            if (app && app.showMessage) {
+                app.showMessage('An unexpected error occurred. Please refresh the page.');
+            }
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            if (app && app.showMessage) {
+                app.showMessage('An unexpected error occurred. Please refresh the page.');
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (app && app.cleanup) {
+                app.cleanup();
+            }
+        });
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', initializeApp);
+        
+        // Fallback initialization if DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+    </script>
+</body>
+</html>
