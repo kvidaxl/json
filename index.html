@@ -24,6 +24,8 @@
             --success-color: #94157B;
             --success-hover: #218838;
             --error-color: #dc3545;
+            --download-color: #17a2b8;
+            --download-hover: #138496;
             --bg-light: #f9f9fb;
             --bg-white: #ffffff;
             --border-color: #e0e0e0;
@@ -243,6 +245,15 @@
             background: var(--success-hover);
         }
 
+        .btn-download {
+            background: var(--download-color);
+            color: white;
+        }
+
+        .btn-download:hover:not(:disabled) {
+            background: var(--download-hover);
+        }
+
         .output {
             margin-top: 24px;
             padding: 20px;
@@ -351,6 +362,18 @@
             pointer-events: none;
         }
 
+        .download-section {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 16px;
@@ -360,7 +383,8 @@
                 padding: 20px;
             }
 
-            .buttons {
+            .buttons,
+            .download-buttons {
                 flex-direction: column;
             }
 
@@ -432,7 +456,7 @@
                     <span class="variable-tag product_description">&lt;product_description&gt;</span>
                 </label>
                 <input type="text" id="product_description" value="Single bed + double bed (with headboard)"
-                    placeholder="Enter product description" maxlength="200">
+                    placeholder="Enter product description" maxlength="2000">
             </div>
 
             <div class="field">
@@ -440,7 +464,7 @@
                     Preservation Instructions
                     <span class="variable-tag preservation">&lt;preservation&gt;</span>
                 </label>
-                <textarea id="preservation" maxlength="1000">Absolutely do not alter the bed in any way.  
+                <textarea id="preservation" maxlength="10000">Absolutely do not alter the bed in any way.  
 Its geometry, structure, length-to-width ratio, height, leg spacing, headboard design, material surface texture, wood grain or fabric pattern, and original color must remain 100% unchanged.  
 No smoothing, stylizing, color shifting, retexturing, or proportion editing is allowed.</textarea>
             </div>
@@ -451,7 +475,7 @@ No smoothing, stylizing, color shifting, retexturing, or proportion editing is a
                     <span class="variable-tag color">&lt;color&gt;</span>
                 </label>
                 <textarea id="color"
-                    maxlength="500">the overall room decor should adapt to the bed's color, ensuring everything complements the original design without altering the bed</textarea>
+                    maxlength="5000">the overall room decor should adapt to the bed's color, ensuring everything complements the original design without altering the bed</textarea>
             </div>
 
             <div class="field">
@@ -460,7 +484,7 @@ No smoothing, stylizing, color shifting, retexturing, or proportion editing is a
                     <span class="variable-tag setting">&lt;setting&gt;</span>
                 </label>
                 <textarea id="setting"
-                    maxlength="500">ultra-bright and airy bedroom with pure white walls and pale wood flooring</textarea>
+                    maxlength="5000">ultra-bright and airy bedroom with pure white walls and pale wood flooring</textarea>
             </div>
 
             <div class="field">
@@ -468,7 +492,7 @@ No smoothing, stylizing, color shifting, retexturing, or proportion editing is a
                     Scene Elements
                     <span class="variable-tag scene_elements">&lt;scene_elements&gt;</span>
                 </label>
-                <textarea id="scene_elements" style="min-height: 120px;" maxlength="1000">- Two matching minimalist bedside tables (white or neutral tone), symmetrically placed beside the bed
+                <textarea id="scene_elements" style="min-height: 120px;" maxlength="10000">- Two matching minimalist bedside tables (white or neutral tone), symmetrically placed beside the bed
 - One large rectangular neutral-tone rug (cream, beige, or light gray), centered precisely under the bed and extending beyond its edges
 - Two abstract framed artworks centered directly above the headboard, in soft neutral colors
 - Sheer white or beige curtains, softly lit
@@ -482,7 +506,7 @@ No smoothing, stylizing, color shifting, retexturing, or proportion editing is a
                 </label>
                 <input type="text" id="remove"
                     value="decorative throw pillows, footstools, window sill plants, bright-colored accents"
-                    maxlength="300">
+                    maxlength="3000">
             </div>
 
             <div class="field">
@@ -491,7 +515,7 @@ No smoothing, stylizing, color shifting, retexturing, or proportion editing is a
                     <span class="variable-tag lighting">&lt;lighting&gt;</span>
                 </label>
                 <textarea id="lighting"
-                    maxlength="500">extremely bright natural daylight filling the room — soft yet intense, with well-defined soft shadows and high overall ambient brightness</textarea>
+                    maxlength="5000">extremely bright natural daylight filling the room — soft yet intense, with well-defined soft shadows and high overall ambient brightness</textarea>
             </div>
 
             <div class="field">
@@ -523,7 +547,7 @@ No smoothing, stylizing, color shifting, retexturing, or proportion editing is a
             <h3>Prompt Template</h3>
             <div class="field">
                 <label for="prompt_template">Template (Editable) :</label>
-                <textarea id="prompt_template" style="min-height: 150px;" maxlength="2000">Generate a realistic <style> -style bedroom interior scene featuring the exact same product: a <product_description> as in the reference image, placed against the wall as hero product.
+                <textarea id="prompt_template" style="min-height: 150px;" maxlength="20000">Generate a realistic <style> -style bedroom interior scene featuring the exact same product: a <product_description> as in the reference image, placed against the wall as hero product.
 
 <preservation>
 
@@ -547,6 +571,14 @@ Camera view: <camera_view></textarea>
             <button class="btn-success" onclick="app.copyToClipboard('text')">Copy Text</button>
         </div>
 
+        <div class="download-section">
+            <h4>Download Files</h4>
+            <div class="download-buttons">
+                <button class="btn-download" onclick="app.downloadFile('json')">📥 Download JSON</button>
+                <button class="btn-download" onclick="app.downloadFile('text')">📥 Download TXT</button>
+            </div>
+        </div>
+
         <div id="message-container"></div>
 
         <h3>JSON Output</h3>
@@ -560,19 +592,19 @@ Camera view: <camera_view></textarea>
         class PromptGenerator {
             constructor() {
                 this.config = {
-                    MAX_INPUT_LENGTH: 5000,
-                    MAX_JSON_SIZE: 100000, // 100KB limit
+                    MAX_INPUT_LENGTH: 50000, // Increased 10x from 5000
+                    MAX_JSON_SIZE: 1000000, // Increased 10x from 100KB to 1MB
                     AUTO_GENERATE_DELAY: 500,
                     VALIDATION_RULES: {
-                        product_description: { required: true, minLength: 3, maxLength: 200 },
+                        product_description: { required: true, minLength: 3, maxLength: 2000 }, // 10x from 200
                         category: { required: true },
-                        prompt_template: { required: true, minLength: 10, maxLength: 2000 },
-                        preservation: { maxLength: 1000 },
-                        color: { maxLength: 500 },
-                        setting: { maxLength: 500 },
-                        scene_elements: { maxLength: 1000 },
-                        remove: { maxLength: 300 },
-                        lighting: { maxLength: 500 }
+                        prompt_template: { required: true, minLength: 10, maxLength: 20000 }, // 10x from 2000
+                        preservation: { maxLength: 10000 }, // 10x from 1000
+                        color: { maxLength: 5000 }, // 10x from 500
+                        setting: { maxLength: 5000 }, // 10x from 500
+                        scene_elements: { maxLength: 10000 }, // 10x from 1000
+                        remove: { maxLength: 3000 }, // 10x from 300
+                        lighting: { maxLength: 5000 } // 10x from 500
                     }
                 };
 
@@ -592,10 +624,11 @@ Camera view: <camera_view></textarea>
                 this.state = {
                     cleanJSON: '',
                     cleanText: '',
-                    timeouts: new Set()
+                    timeouts: new Set(),
+                    currentProductDescription: ''
                 };
 
-                this.rateLimiter = new RateLimiter(20, 60000); // 20 operations per minute
+                this.rateLimiter = new RateLimiter(20, 60000);
                 this.init();
             }
 
@@ -605,23 +638,19 @@ Camera view: <camera_view></textarea>
                 this.setupKeyboardShortcuts();
             }
 
-            // Enhanced security: Comprehensive input sanitization
-            sanitizeInput(input, maxLength = 1000) {
+            sanitizeInput(input, maxLength = 10000) { // Increased default from 1000
                 if (input == null) return '';
 
                 let sanitized = String(input).trim();
 
-                // Remove control characters (except \n, \r, \t)
                 sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '');
 
-                // Preserve our template placeholders before removing HTML tags
                 const templatePlaceholders = [
                     '<style>', '<product_description>', '<category>', '<preservation>',
                     '<color>', '<setting>', '<scene_elements>', '<remove>', 
                     '<lighting>', '<camera_view>'
                 ];
 
-                // Temporarily replace placeholders with safe tokens
                 const tokens = {};
                 templatePlaceholders.forEach((placeholder, index) => {
                     const token = `__PLACEHOLDER_${index}__`;
@@ -629,18 +658,14 @@ Camera view: <camera_view></textarea>
                     sanitized = sanitized.replace(new RegExp(this.escapeRegExp(placeholder), 'g'), token);
                 });
 
-                // Remove all HTML tags (except our preserved placeholders)
                 sanitized = sanitized.replace(/<[^>]*>/gi, '');
 
-                // Restore the placeholders
                 Object.entries(tokens).forEach(([token, placeholder]) => {
                     sanitized = sanitized.replace(new RegExp(this.escapeRegExp(token), 'g'), placeholder);
                 });
 
-                // Remove dangerous protocols and javascript
                 sanitized = sanitized.replace(/(javascript|data|vbscript|file|about):/gi, '');
 
-                // Remove common XSS patterns
                 const xssPatterns = [
                     /on\w+\s*=/gi,
                     /expression\s*\(/gi,
@@ -654,7 +679,6 @@ Camera view: <camera_view></textarea>
                     sanitized = sanitized.replace(pattern, '');
                 });
 
-                // Limit length
                 if (sanitized.length > maxLength) {
                     sanitized = sanitized.substring(0, maxLength);
                 }
@@ -709,7 +733,6 @@ Camera view: <camera_view></textarea>
                 return names[fieldId] || fieldId.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            // Safe DOM utilities
             safeCreateElement(tag, className, textContent) {
                 const element = document.createElement(tag);
                 if (className) element.className = className;
@@ -726,7 +749,6 @@ Camera view: <camera_view></textarea>
                 return element;
             }
 
-            // Rate limiting utility
             checkRateLimit() {
                 if (!this.rateLimiter.isAllowed()) {
                     this.showMessage('Rate limit exceeded. Please wait a moment before trying again.');
@@ -735,7 +757,6 @@ Camera view: <camera_view></textarea>
                 return true;
             }
 
-            // Utility functions
             debounce(func, wait) {
                 let timeout;
                 return (...args) => {
@@ -773,12 +794,10 @@ Camera view: <camera_view></textarea>
                 return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
 
-            // UI management
             showMessage(message, type = 'error') {
                 const container = this.safeGetElement('message-container');
                 if (!container) return;
 
-                // Clear existing content and create new message
                 container.innerHTML = '';
                 const messageDiv = this.safeCreateElement('div', `message ${type}`, message);
                 container.appendChild(messageDiv);
@@ -807,18 +826,14 @@ Camera view: <camera_view></textarea>
                 }
             }
 
-            // Safe content highlighting using DOM manipulation
             highlightJson(jsonStr) {
                 if (!jsonStr) return '';
 
-                // Create a safe text node first
                 const container = document.createElement('div');
                 container.textContent = jsonStr;
 
-                // Get the escaped content
                 const escaped = container.innerHTML;
 
-                // Apply syntax highlighting using safe string replacement
                 let highlighted = escaped;
 
                 const patterns = [
@@ -843,7 +858,6 @@ Camera view: <camera_view></textarea>
                     return '';
                 }
 
-                // Safely escape the text first
                 const container = document.createElement('div');
                 container.textContent = text;
                 let highlighted = container.innerHTML;
@@ -852,7 +866,6 @@ Camera view: <camera_view></textarea>
                     return highlighted;
                 }
 
-                // Apply highlighting for each variable value that exists in the text
                 const sortedEntries = Object.entries(values)
                     .filter(([key, value]) => {
                         const val = String(value || '').trim();
@@ -864,14 +877,12 @@ Camera view: <camera_view></textarea>
                     const cleanValue = this.sanitizeInput(value);
                     if (!cleanValue) return;
 
-                    // Safely escape the value for HTML
                     const valueContainer = document.createElement('div');
                     valueContainer.textContent = cleanValue;
                     const escapedValue = valueContainer.innerHTML;
                     
                     if (!escapedValue) return;
 
-                    // Replace all instances of this value with highlighted version
                     const pattern = new RegExp(this.escapeRegExp(escapedValue), 'g');
                     highlighted = highlighted.replace(pattern, `<span class="${this.variableColors[key]}">${escapedValue}</span>`);
                 });
@@ -879,7 +890,6 @@ Camera view: <camera_view></textarea>
                 return highlighted;
             }
 
-            // JSON Import functionality with enhanced security
             importFromJson() {
                 try {
                     if (!this.checkRateLimit()) return;
@@ -894,7 +904,6 @@ Camera view: <camera_view></textarea>
 
                     const jsonText = jsonTextArea.value.trim();
                     
-                    // Security: Check size before processing
                     if (jsonText.length > this.config.MAX_JSON_SIZE) {
                         this.showMessage(`JSON too large. Maximum size is ${this.config.MAX_JSON_SIZE / 1000}KB.`);
                         return;
@@ -908,16 +917,13 @@ Camera view: <camera_view></textarea>
                         return;
                     }
 
-                    // Validate JSON structure
                     if (!this.validateJsonStructure(jsonData)) {
                         this.showMessage('JSON structure is not compatible with this tool.');
                         return;
                     }
 
-                    // Populate form fields
                     this.populateFormFromJson(jsonData);
                     
-                    // Generate output with imported data
                     this.generateOutput();
                     
                     this.showMessage('JSON configuration imported successfully!', 'success');
@@ -929,21 +935,17 @@ Camera view: <camera_view></textarea>
             }
 
             validateJsonStructure(jsonData) {
-                // Check if it has the expected structure
                 if (!jsonData || typeof jsonData !== 'object') {
                     return false;
                 }
 
-                // Check for either direct prompt_parameters or the full MongoDB structure
                 return jsonData.prompt_parameters || 
                        (jsonData.style || jsonData.product_description || jsonData.category);
             }
 
             populateFormFromJson(jsonData) {
-                // Handle both full MongoDB structure and simplified parameter objects
                 let parameters = jsonData.prompt_parameters || jsonData;
                 
-                // Map JSON fields to form fields
                 const fieldMappings = {
                     'style': 'style',
                     'product_description': 'product_description',
@@ -957,24 +959,20 @@ Camera view: <camera_view></textarea>
                     'camera_view': 'camera_view'
                 };
 
-                // Populate form fields
                 Object.entries(fieldMappings).forEach(([jsonKey, formFieldId]) => {
                     const element = this.safeGetElement(formFieldId);
                     if (element && parameters[jsonKey] !== undefined) {
-                        // Ensure element is the right type before setting value
                         if (element instanceof HTMLInputElement || 
                             element instanceof HTMLTextAreaElement || 
                             element instanceof HTMLSelectElement) {
                             element.value = this.sanitizeInput(parameters[jsonKey]);
                             
-                            // Trigger validation
                             const validation = this.validateInput(formFieldId, element.value);
                             this.updateFieldValidation(formFieldId, validation.valid);
                         }
                     }
                 });
 
-                // Handle prompt template if available
                 if (jsonData.prompt_template) {
                     const templateElement = this.safeGetElement('prompt_template');
                     if (templateElement && templateElement instanceof HTMLTextAreaElement) {
@@ -994,13 +992,15 @@ Camera view: <camera_view></textarea>
                 this.showMessage('JSON import area cleared.', 'success');
             }
 
-            // Core functionality
             generateOutput() {
                 try {
                     this.clearMessages();
 
                     const formData = this.getFormData();
                     if (!formData) return;
+
+                    // Update current product description for filename generation
+                    this.state.currentProductDescription = formData.product_description || 'prompt';
 
                     const jsonData = this.createJsonData(formData);
                     const textPrompt = this.createTextPrompt(formData);
@@ -1030,7 +1030,6 @@ Camera view: <camera_view></textarea>
                         return;
                     }
 
-                    // Ensure we're working with form elements
                     if (!(element instanceof HTMLInputElement || 
                           element instanceof HTMLTextAreaElement || 
                           element instanceof HTMLSelectElement)) {
@@ -1082,14 +1081,10 @@ Camera view: <camera_view></textarea>
             createTextPrompt(values) {
                 let textPrompt = values.prompt_template || '';
                 
-                // Debug: log the original template and values in detail
                 console.log('Original template:', textPrompt);
                 console.log('Values object:', JSON.stringify(values, null, 2));
                 
-                // The template appears to be missing placeholders, so let's reconstruct it properly
-                // Check if template has placeholders, if not, it means they were stripped by sanitization
                 if (!textPrompt.includes('<style>') && !textPrompt.includes('<product_description>')) {
-                    // Template was over-sanitized, let's build the proper text
                     textPrompt = `Generate a realistic ${values.style || ''}-style bedroom interior scene featuring the exact same product: a ${values.product_description || ''} as in the reference image, placed against the wall as hero product.
 
 ${values.preservation || ''}
@@ -1106,7 +1101,6 @@ Lighting: ${values.lighting || ''}
 
 Camera view: ${values.camera_view || ''}`;
                 } else {
-                    // Template has placeholders, do normal replacement
                     textPrompt = textPrompt.replace(/<style>/g, values.style || '');
                     textPrompt = textPrompt.replace(/<product_description>/g, values.product_description || '');
                     textPrompt = textPrompt.replace(/<category>/g, values.category || '');
@@ -1136,11 +1130,9 @@ Camera view: ${values.camera_view || ''}`;
                     }
 
                     if (textOutput) {
-                        // Debug: let's see what we're actually getting
                         console.log('Text Prompt:', textPrompt);
                         console.log('Values:', values);
                         
-                        // Use the actual text prompt (already processed) for highlighting
                         textOutput.innerHTML = this.highlightText(textPrompt, values);
                     }
                 } catch (error) {
@@ -1162,7 +1154,6 @@ Camera view: ${values.camera_view || ''}`;
                 });
             }
 
-            // Clipboard functionality
             async copyToClipboard(type) {
                 try {
                     if (!this.checkRateLimit()) return;
@@ -1205,13 +1196,68 @@ Camera view: ${values.camera_view || ''}`;
                 }
             }
 
-            // Event management
+            // New download functionality
+            generateFilename(type) {
+                // Sanitize product description for filename
+                const productDesc = this.state.currentProductDescription || 'prompt';
+                let filename = productDesc
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s]/g, '') // Remove special characters
+                    .replace(/\s+/g, '_')        // Replace spaces with underscores
+                    .substring(0, 50);           // Limit length
+                
+                // Ensure filename is not empty
+                if (!filename) {
+                    filename = 'prompt';
+                }
+
+                const extension = type === 'json' ? '.json' : '.txt';
+                return filename + extension;
+            }
+
+            downloadFile(type) {
+                try {
+                    if (!this.checkRateLimit()) return;
+
+                    const content = type === 'json' ? this.state.cleanJSON : this.state.cleanText;
+
+                    if (!content || !content.trim()) {
+                        this.showMessage('Please generate output first before downloading!');
+                        return;
+                    }
+
+                    const filename = this.generateFilename(type);
+                    const mimeType = type === 'json' ? 'application/json' : 'text/plain';
+
+                    // Create blob and download
+                    const blob = new Blob([content], { type: mimeType });
+                    const url = URL.createObjectURL(blob);
+
+                    // Create temporary download link
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    link.style.display = 'none';
+
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Clean up the URL object
+                    URL.revokeObjectURL(url);
+
+                    this.showMessage(`${filename} downloaded successfully!`, 'success');
+                } catch (error) {
+                    console.error('Download failed:', error);
+                    this.showMessage('Download failed. Please try copying the content instead.');
+                }
+            }
+
             setupEventListeners() {
                 const inputs = document.querySelectorAll('input, select, textarea');
                 const debouncedGenerate = this.debounce(() => this.generateOutput(), this.config.AUTO_GENERATE_DELAY);
 
                 inputs.forEach(input => {
-                    // Skip the JSON import textarea from auto-generation
                     if (input.id === 'json_import') return;
 
                     const eventHandler = () => {
@@ -1229,7 +1275,6 @@ Camera view: ${values.camera_view || ''}`;
                         input.addEventListener(eventType, eventHandler);
                     });
 
-                    // Security: sanitize pasted content
                     input.addEventListener('paste', () => {
                         setTimeout(() => {
                             if (input instanceof HTMLInputElement || 
@@ -1250,7 +1295,8 @@ Camera view: ${values.camera_view || ''}`;
                     'g': () => this.generateOutput(),
                     'j': () => this.copyToClipboard('json'),
                     't': () => this.copyToClipboard('text'),
-                    'i': () => this.importFromJson()
+                    'i': () => this.importFromJson(),
+                    'd': () => this.downloadFile('json')
                 };
 
                 document.addEventListener('keydown', (event) => {
@@ -1261,7 +1307,6 @@ Camera view: ${values.camera_view || ''}`;
                 });
             }
 
-            // Cleanup
             cleanup() {
                 this.state.timeouts.forEach(timeoutId => {
                     clearTimeout(timeoutId);
@@ -1270,7 +1315,6 @@ Camera view: ${values.camera_view || ''}`;
             }
         }
 
-        // Rate limiting class
         class RateLimiter {
             constructor(maxRequests = 10, windowMs = 60000) {
                 this.requests = [];
@@ -1291,7 +1335,6 @@ Camera view: ${values.camera_view || ''}`;
             }
         }
 
-        // Application initialization
         let app;
         
         const initializeApp = () => {
@@ -1309,7 +1352,6 @@ Camera view: ${values.camera_view || ''}`;
             }
         };
 
-        // Error handling
         window.addEventListener('error', (event) => {
             console.error('Global error:', event.error);
             if (app && app.showMessage) {
@@ -1324,17 +1366,14 @@ Camera view: ${values.camera_view || ''}`;
             }
         });
 
-        // Cleanup on page unload
         window.addEventListener('beforeunload', () => {
             if (app && app.cleanup) {
                 app.cleanup();
             }
         });
 
-        // Initialize the application
         document.addEventListener('DOMContentLoaded', initializeApp);
         
-        // Fallback initialization if DOMContentLoaded already fired
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initializeApp);
         } else {
@@ -1344,4 +1383,3 @@ Camera view: ${values.camera_view || ''}`;
 </body>
 
 </html>
-
