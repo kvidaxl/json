@@ -8,7 +8,7 @@
     default-src 'self';
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src https://fonts.gstatic.com;
-    script-src 'self' 'unsafe-inline';
+    script-src 'self' 'nonce-jsongen2024';
     object-src 'none';
     base-uri 'self';
     form-action 'none';
@@ -18,387 +18,88 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #94157B;
-            --primary-hover: #2e5eff;
-            --success-color: #94157B;
-            --success-hover: #218838;
-            --error-color: #dc3545;
-            --download-color: #17a2b8;
-            --download-hover: #138496;
-            --bg-light: #f9f9fb;
-            --bg-white: #ffffff;
-            --border-color: #e0e0e0;
-            --text-color: #333333;
-            --text-light: #666;
-            --border-radius: 8px;
-            --border-radius-sm: 4px;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+        /* CSS organization using Cascade Layers */
+        @layer base, components, utilities;
+
+        @layer base {
+            :root {
+                --primary-color: #94157B; --primary-hover: #b31a90;
+                --success-color: #28a745; --success-hover: #218838;
+                --error-color: #dc3545; --error-bg: #f8d7da;
+                --download-color: #17a2b8; --download-hover: #138496;
+                --reset-color: #6c757d; --reset-hover: #5a6268;
+                --bg-light: #f9f9fb; --bg-white: #ffffff;
+                --border-color: #e0e0e0; --text-color: #333333;
+                --text-light: #666; --border-radius: 8px;
+                --border-radius-sm: 4px; --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.1);
+                --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+            }
+            * { box-sizing: border-box; }
+            body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1000px; margin: 20px auto; padding: 24px; background-color: var(--bg-light); color: var(--text-color); line-height: 1.6; font-size: 16px; }
         }
 
-        * {
-            box-sizing: border-box;
+        @layer components {
+            .container { background: var(--bg-white); padding: 32px; border-radius: var(--border-radius); box-shadow: var(--shadow-lg); }
+            h1 { text-align: center; color: var(--primary-color); margin-block-end: 40px; font-weight: 700; font-size: 2rem; background-color: #f3daf5; border-radius: 12px; padding: 16px; }
+            .section { border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 24px; margin-block-end: 24px; }
+            h3 { margin: 0 0 20px 0; color: var(--primary-color); border-block-end: 2px solid var(--primary-color); padding-block-end: 8px; font-weight: 600; font-size: 1.2rem; }
+            .field { margin-block-end: 20px; }
+            label { display: block; margin-block-end: 8px; font-weight: 600; color: var(--text-color); }
+            :is(input, select, textarea) { width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: var(--border-radius-sm); font-size: 14px; font-family: inherit; transition: border-color 0.2s ease, box-shadow 0.2s ease; background: var(--bg-white); }
+            :is(input, select, textarea):focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(148, 21, 123, 0.1); }
+            textarea { resize: vertical; min-height: 80px; }
+            .variable-tag { font-family: var(--font-mono); font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: var(--border-radius-sm); margin-inline-start: 8px; }
+            .output { margin-top: 24px; padding: 20px; border: 1px solid var(--border-color); border-radius: var(--border-radius); font-size: 13px; line-height: 1.5; max-height: 500px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; }
+            .message { padding: 16px; border-radius: var(--border-radius-sm); margin: 16px 0; font-weight: 500; border-inline-start: 4px solid; }
+            .message.error { color: var(--error-color); background-color: var(--error-bg); border-inline-start-color: var(--error-color); }
+            .message.success { color: #155724; background-color: #d4edda; border-inline-start-color: #155724; }
+            .field .error-message { color: var(--error-color); font-size: 0.875rem; margin-top: 4px; font-weight: 500; min-height: 1.2rem; }
         }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 24px;
-            background-color: var(--bg-light);
-            color: var(--text-color);
-            line-height: 1.6;
-            font-size: 16px;
+        @layer utilities {
+            .var-style, .variable-tag.style { color: #2e7d32; background-color: #e8f5e8; }
+            .var-product_description, .variable-tag.product_description { color: #1565c0; background-color: #e3f2fd; }
+            .var-category, .variable-tag.category { color: #7b1fa2; background-color: #f3e5f5; }
+            .var-preservation, .variable-tag.preservation { color: #d32f2f; background-color: #ffebee; }
+            .var-color, .variable-tag.color { color: #f57c00; background-color: #fff3e0; }
+            .var-setting, .variable-tag.setting { color: #00796b; background-color: #e0f2f1; }
+            .var-scene_elements, .variable-tag.scene_elements { color: #5d4037; background-color: #efebe9; }
+            .var-remove, .variable-tag.remove { color: #c2185b; background-color: #fce4ec; }
+            .var-lighting, .variable-tag.lighting { color: #f9a825; background-color: #fffde7; }
+            .var-camera_view, .variable-tag.camera_view { color: #455a64; background-color: #eceff1; }
+            
+            .buttons { display: flex; gap: 12px; margin: 24px 0; flex-wrap: wrap; justify-content: flex-start; }
+            button { padding: 12px 24px; border: none; border-radius: var(--border-radius-sm); cursor: pointer; font-size: 14px; font-family: inherit; font-weight: 500; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
+            button:hover:not(:disabled) { transform: translateY(-1px); }
+            button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+            
+            .btn-primary { background: var(--primary-color); color: white; }
+            .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+            .btn-success { background: var(--success-color); color: white; }
+            .btn-success:hover:not(:disabled) { background: var(--success-hover); }
+            .btn-download { background: var(--download-color); color: white; }
+            .btn-download:hover:not(:disabled) { background: var(--download-hover); }
+            .btn-reset { background: var(--reset-color); color: white; }
+            .btn-reset:hover:not(:disabled) { background: var(--reset-hover); }
+            
+            .json-output { background: #1e1e1e; color: #d4d4d4; font-family: var(--font-mono); font-size: 12px; }
+            .text-output { background: #f8f9fa; color: var(--text-color); font-family: inherit; border: 2px solid var(--primary-color); font-weight: 500; }
+            .json-key { color: #f97316; } .json-string { color: #13aa52; } .json-number { color: #4b8e8d; }
+            .json-boolean { color: #ef4444; } .json-null { color: #9ca3af; } .json-objectid { color: #a78bfa; } .json-date { color: #60a5fa; }
+            .form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+            .form-row .field { flex: 1; min-width: 250px; }
+            
+            [aria-invalid="true"] { border-color: var(--error-color); background-color: #fff5f5; }
+            [data-validation="valid"] { border-color: var(--success-color); }
         }
-
-        .container {
-            background: var(--bg-white);
-            padding: 32px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-lg);
-        }
-
-        h1 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 40px;
-            font-weight: 700;
-            font-size: 2rem;
-            background-color: #f3daf5;
-            border-radius: 12px;
-            padding: 16px;
-        }
-
-        .section {
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 24px;
-            margin-bottom: 24px;
-            background: var(--bg-white);
-        }
-
-        .section h3 {
-            margin: 0 0 20px 0;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-
-        .field {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: var(--border-radius-sm);
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            background: var(--bg-white);
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(148, 21, 123, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        /* Variable tag styling */
-        .variable-tag {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: var(--border-radius-sm);
-            margin-left: 8px;
-        }
-
-        /* Variable color system */
-        .var-style,
-        .variable-tag.style {
-            color: #2e7d32;
-            background-color: #e8f5e8;
-        }
-
-        .var-product_description,
-        .variable-tag.product_description {
-            color: #1565c0;
-            background-color: #e3f2fd;
-        }
-
-        .var-category,
-        .variable-tag.category {
-            color: #7b1fa2;
-            background-color: #f3e5f5;
-        }
-
-        .var-preservation,
-        .variable-tag.preservation {
-            color: #d32f2f;
-            background-color: #ffebee;
-        }
-
-        .var-color,
-        .variable-tag.color {
-            color: #f57c00;
-            background-color: #fff3e0;
-        }
-
-        .var-setting,
-        .variable-tag.setting {
-            color: #00796b;
-            background-color: #e0f2f1;
-        }
-
-        .var-scene_elements,
-        .variable-tag.scene_elements {
-            color: #5d4037;
-            background-color: #efebe9;
-        }
-
-        .var-remove,
-        .variable-tag.remove {
-            color: #c2185b;
-            background-color: #fce4ec;
-        }
-
-        .var-lighting,
-        .variable-tag.lighting {
-            color: #f9a825;
-            background-color: #fffde7;
-        }
-
-        .var-camera_view,
-        .variable-tag.camera_view {
-            color: #455a64;
-            background-color: #eceff1;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 12px;
-            margin: 24px 0;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            font-size: 14px;
-            font-family: inherit;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        button:hover:not(:disabled) {
-            transform: translateY(-1px);
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-hover);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .btn-success:hover:not(:disabled) {
-            background: var(--success-hover);
-        }
-
-        .btn-download {
-            background: var(--download-color);
-            color: white;
-        }
-
-        .btn-download:hover:not(:disabled) {
-            background: var(--download-hover);
-        }
-
-        .output {
-            margin-top: 24px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-size: 13px;
-            line-height: 1.5;
-            max-height: 500px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .json-output {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            font-family: var(--font-mono);
-            font-size: 12px;
-            line-height: 1.4;
-            letter-spacing: 0.5px;
-        }
-
-        .text-output {
-            background: #f8f9fa;
-            color: var(--text-color);
-            font-family: inherit;
-            border: 2px solid var(--primary-color);
-            font-weight: 700;
-        }
-
-        /* JSON syntax highlighting */
-        .json-key {
-            color: #f97316;
-            font-weight: 600;
-        }
-
-        .json-string {
-            color: #13aa52;
-        }
-
-        .json-number {
-            color: #4b8e8d;
-        }
-
-        .json-boolean {
-            color: #ef4444;
-            font-weight: 600;
-        }
-
-        .json-null {
-            color: #9ca3af;
-            font-style: italic;
-        }
-
-        .json-objectid {
-            color: #a78bfa;
-            font-weight: 500;
-        }
-
-        .json-date {
-            color: #60a5fa;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .form-row .field {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .message {
-            padding: 16px;
-            border-radius: var(--border-radius-sm);
-            margin: 16px 0;
-            font-weight: 500;
-            border-left: 4px solid;
-        }
-
-        .message.error {
-            color: var(--error-color);
-            background-color: #f8d7da;
-            border-left-color: var(--error-color);
-        }
-
-        .message.success {
-            color: var(--success-color);
-            background-color: #d4edda;
-            border-left-color: var(--success-color);
-        }
-
-        .field-invalid {
-            border-color: var(--error-color) !important;
-            background-color: #fff5f5 !important;
-        }
-
-        .field-valid {
-            border-color: var(--success-color) !important;
-        }
-
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .download-section {
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-            margin-top: 20px;
-        }
-
-        .download-buttons {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
         @media (max-width: 768px) {
-            body {
-                padding: 16px;
-            }
-
-            .container {
-                padding: 20px;
-            }
-
-            .buttons,
-            .download-buttons {
-                flex-direction: column;
-            }
-
-            button {
-                justify-content: center;
-            }
-
-            .form-row {
-                flex-direction: column;
-            }
-
-            .form-row .field {
-                min-width: 100%;
-            }
+            body { padding: 16px; }
+            .container { padding: 20px; }
+            .buttons { flex-direction: column; align-items: stretch; }
+            button { justify-content: center; }
+            .form-row { flex-direction: column; }
+            .form-row .field { min-width: 100%; }
         }
     </style>
 </head>
@@ -407,139 +108,73 @@
     <div class="container">
         <h1>JSON Prompt Generator</h1>
 
+        <div id="message-container" role="status" aria-live="polite"></div>
+
         <div class="section">
-            <h3>Import JSON Configuration</h3>
+            <h3>Import JSON</h3>
             <div class="field">
                 <label for="json_import">Paste JSON Configuration:</label>
-                <textarea id="json_import" placeholder="Paste your JSON configuration here to populate the form..."
-                    style="min-height: 120px;"></textarea>
+                <textarea id="json_import" placeholder="Paste your JSON configuration here to populate the form..." style="min-height: 120px;"></textarea>
             </div>
             <div class="buttons">
-                <button class="btn-primary" onclick="app.importFromJson()">Import from JSON</button>
-                <button class="btn-success" onclick="app.clearJsonImport()">Clear</button>
+                <button id="btn-import-json" class="btn-primary">Import from JSON</button>
+                <button id="btn-clear-import" class="btn-reset">Clear</button>
             </div>
         </div>
 
         <div class="section">
             <h3>Prompt Variables</h3>
-
             <div class="form-row">
                 <div class="field">
-                    <label for="style">
-                        Style Keyword
-                        <span class="variable-tag style">&lt;style&gt;</span>
-                    </label>
-                    <select id="style">
-                        <option value="Modern">Modern</option>
-                        <option value="Scandinavian">Scandinavian</option>
-                        <option value="Modern Nordic">Modern Nordic</option>
-                        <option value="Scandinavian Minimalist">Scandinavian Minimalist</option>
-                        <option value="Light Industrial">Light Industrial</option>
-                        <option value="American Farmhouse">American Farmhouse</option>
-                    </select>
+                    <label for="style">Style Keyword <span class="variable-tag style">&lt;style&gt;</span></label>
+                    <select id="style" aria-describedby="style-error"></select>
+                    <div id="style-error" class="error-message" role="alert"></div>
                 </div>
-
                 <div class="field">
-                    <label for="category">
-                        Category
-                        <span class="variable-tag category">&lt;category&gt;</span>
-                    </label>
-                    <select id="category">
-                        <option value="Beds">Beds</option>
-                    </select>
+                    <label for="category">Category <span class="variable-tag category">&lt;category&gt;</span></label>
+                    <select id="category" aria-describedby="category-error"></select>
+                    <div id="category-error" class="error-message" role="alert"></div>
                 </div>
             </div>
-
             <div class="field">
-                <label for="product_description">
-                    Product Description
-                    <span class="variable-tag product_description">&lt;product_description&gt;</span>
-                </label>
-                <input type="text" id="product_description" value="Single bed + double bed (with headboard)"
-                    placeholder="Enter product description" maxlength="2000">
+                <label for="product_description">Product Description <span class="variable-tag product_description">&lt;product_description&gt;</span></label>
+                <input type="text" id="product_description" placeholder="Enter product description" aria-describedby="product_description-error">
+                <div id="product_description-error" class="error-message" role="alert"></div>
             </div>
-
             <div class="field">
-                <label for="preservation">
-                    Preservation Instructions
-                    <span class="variable-tag preservation">&lt;preservation&gt;</span>
-                </label>
-                <textarea id="preservation" maxlength="10000">Absolutely do not alter the bed in any way.  
-Its geometry, structure, length-to-width ratio, height, leg spacing, headboard design, material surface texture, wood grain or fabric pattern, and original color must remain 100% unchanged.  
-No smoothing, stylizing, color shifting, retexturing, or proportion editing is allowed.</textarea>
+                <label for="preservation">Preservation Instructions <span class="variable-tag preservation">&lt;preservation&gt;</span></label>
+                <textarea id="preservation" aria-describedby="preservation-error"></textarea>
+                 <div id="preservation-error" class="error-message" role="alert"></div>
             </div>
-
             <div class="field">
-                <label for="color">
-                    Color Harmony
-                    <span class="variable-tag color">&lt;color&gt;</span>
-                </label>
-                <textarea id="color"
-                    maxlength="5000">the overall room decor should adapt to the bed's color, ensuring everything complements the original design without altering the bed</textarea>
+                <label for="color">Color Harmony <span class="variable-tag color">&lt;color&gt;</span></label>
+                <textarea id="color" aria-describedby="color-error"></textarea>
+                <div id="color-error" class="error-message" role="alert"></div>
             </div>
-
             <div class="field">
-                <label for="setting">
-                    Setting
-                    <span class="variable-tag setting">&lt;setting&gt;</span>
-                </label>
-                <textarea id="setting"
-                    maxlength="5000">ultra-bright and airy bedroom with pure white walls and pale wood flooring</textarea>
+                <label for="setting">Setting <span class="variable-tag setting">&lt;setting&gt;</span></label>
+                <textarea id="setting" aria-describedby="setting-error"></textarea>
+                <div id="setting-error" class="error-message" role="alert"></div>
             </div>
-
             <div class="field">
-                <label for="scene_elements">
-                    Scene Elements
-                    <span class="variable-tag scene_elements">&lt;scene_elements&gt;</span>
-                </label>
-                <textarea id="scene_elements" style="min-height: 120px;" maxlength="10000">- Two matching minimalist bedside tables (white or neutral tone), symmetrically placed beside the bed
-- One large rectangular neutral-tone rug (cream, beige, or light gray), centered precisely under the bed and extending beyond its edges
-- Two abstract framed artworks centered directly above the headboard, in soft neutral colors
-- Sheer white or beige curtains, softly lit
-- (Optional) One tall indoor potted plant in the back corner, in a white or stone-colored ceramic pot</textarea>
+                <label for="scene_elements">Scene Elements <span class="variable-tag scene_elements">&lt;scene_elements&gt;</span></label>
+                <textarea id="scene_elements" style="min-height: 120px;" aria-describedby="scene_elements-error"></textarea>
+                <div id="scene_elements-error" class="error-message" role="alert"></div>
             </div>
-
             <div class="field">
-                <label for="remove">
-                    Remove
-                    <span class="variable-tag remove">&lt;remove&gt;</span>
-                </label>
-                <input type="text" id="remove"
-                    value="decorative throw pillows, footstools, window sill plants, bright-colored accents"
-                    maxlength="3000">
+                <label for="remove">Remove <span class="variable-tag remove">&lt;remove&gt;</span></label>
+                <input type="text" id="remove" placeholder="e.g., decorative throw pillows, footstools" aria-describedby="remove-error">
+                <div id="remove-error" class="error-message" role="alert"></div>
             </div>
-
             <div class="field">
-                <label for="lighting">
-                    Lighting
-                    <span class="variable-tag lighting">&lt;lighting&gt;</span>
-                </label>
-                <textarea id="lighting"
-                    maxlength="5000">extremely bright natural daylight filling the room — soft yet intense, with well-defined soft shadows and high overall ambient brightness</textarea>
+                <label for="lighting">Lighting <span class="variable-tag lighting">&lt;lighting&gt;</span></label>
+                <textarea id="lighting" aria-describedby="lighting-error"></textarea>
+                <div id="lighting-error" class="error-message" role="alert"></div>
             </div>
-
             <div class="field">
-                <label for="camera_view">
-                    Camera View
-                    <span class="variable-tag camera_view">&lt;camera_view&gt;</span>
-                </label>
-                <select id="camera_view">
-                    <option value="front-centered perspective, highlighting the overall bed design and symmetry">
-                        front-centered perspective, highlighting the overall bed design and symmetry</option>
-                    <option value="front view from above">front view from above</option>
-                    <option value="slightly front-left perspective">slightly front-left perspective</option>
-                    <option value="30-degree front-left perspective">30-degree front-left perspective</option>
-                    <option value="45-degree front-left perspective">45-degree front-left perspective</option>
-                    <option value="slightly front-right perspective">slightly front-right perspective</option>
-                    <option value="30-degree front-right perspective">30-degree front-right perspective</option>
-                    <option value="45-degree front-right perspective">45-degree front-right perspective</option>
-                    <option value="direct left-side perspective, showing full side structure">direct left-side
-                        perspective, showing full side structure</option>
-                    <option value="direct right-side perspective, showing full side structure">direct right-side
-                        perspective, showing full side structure</option>
-                    <option value="slightly rear view">slightly rear view</option>
-                    <option value="top-down view">top-down view</option>
-                </select>
+                <label for="camera_view">Camera View <span class="variable-tag camera_view">&lt;camera_view&gt;</span></label>
+                <select id="camera_view" aria-describedby="camera_view-error"></select>
+                <div id="camera_view-error" class="error-message" role="alert"></div>
             </div>
         </div>
 
@@ -547,839 +182,377 @@ No smoothing, stylizing, color shifting, retexturing, or proportion editing is a
             <h3>Prompt Template</h3>
             <div class="field">
                 <label for="prompt_template">Template (Editable) :</label>
-                <textarea id="prompt_template" style="min-height: 150px;" maxlength="20000">Generate a realistic <style> -style bedroom interior scene featuring the exact same product: a <product_description> as in the reference image, placed against the wall as hero product.
-
-<preservation>
-
-Style: <style>
-
-Color harmony: <color>
-Setting: <setting>
-
-Scene Elements: <scene_elements>
-
-Remove: <remove>
-Lighting: <lighting>
-
-Camera view: <camera_view></textarea>
+                <textarea id="prompt_template" style="min-height: 150px;" aria-describedby="prompt_template-error"></textarea>
+                <div id="prompt_template-error" class="error-message" role="alert"></div>
             </div>
         </div>
 
         <div class="buttons">
-            <button class="btn-primary" onclick="app.generateOutput()">Generate Output</button>
-            <button class="btn-success" onclick="app.copyToClipboard('json')">Copy JSON</button>
-            <button class="btn-success" onclick="app.copyToClipboard('text')">Copy Text</button>
+            <button id="btn-copy-json" class="btn-success">Copy JSON</button>
+            <button id="btn-copy-text" class="btn-success">Copy Text</button>
+            <button id="btn-download-json" class="btn-download">📥 Download JSON</button>
+            <button id="btn-download-txt" class="btn-download">📥 Download TXT</button>
+            <button id="btn-reset-form" class="btn-reset">Reset Form</button>
         </div>
-
-        <div class="download-section">
-            <h4>Download Files</h4>
-            <div class="download-buttons">
-                <button class="btn-download" onclick="app.downloadFile('json')">📥 Download JSON</button>
-                <button class="btn-download" onclick="app.downloadFile('text')">📥 Download TXT</button>
-            </div>
-        </div>
-
-        <div id="message-container"></div>
-
+        
         <h3>JSON Output</h3>
-        <div class="output json-output" id="json-output">Click "Generate Output" to create your configuration...</div>
+        <div class="output json-output" id="json-output">Adjust inputs to see your configuration...</div>
 
         <h3>Text Prompt Preview</h3>
-        <div class="output text-output" id="text-output">Click "Generate Output" to create your text prompt...</div>
+        <div class="output text-output" id="text-output">Adjust inputs to see your text prompt...</div>
     </div>
 
-    <script>
+    <script nonce="jsongen2024">
+        const APP_CONFIG = {
+            STORAGE_KEY: 'jsonPromptGeneratorDraft',
+            MAX_JSON_SIZE: 1000000,
+            AUTO_GENERATE_DELAY: 500,
+            MAX_JSON_DEPTH: 10,
+            DEFAULT_VALUES: {
+                product_description: "Single bed + double bed (with headboard)",
+                preservation: "Absolutely do not alter the bed in any way.\nIts geometry, structure, length-to-width ratio, height, leg spacing, headboard design, material surface texture, wood grain or fabric pattern, and original color must remain 100% unchanged.\nNo smoothing, stylizing, color shifting, retexturing, or proportion editing is allowed.",
+                color: "the overall room decor should adapt to the bed's color, ensuring everything complements the original design without altering the bed",
+                setting: "ultra-bright and airy bedroom with pure white walls and pale wood flooring",
+                scene_elements: "- Two matching minimalist bedside tables (white or neutral tone), symmetrically placed beside the bed\n- One large rectangular neutral-tone rug (cream, beige, or light gray), centered precisely under the bed and extending beyond its edges\n- Two abstract framed artworks centered directly above the headboard, in soft neutral colors\n- Sheer white or beige curtains, softly lit\n- (Optional) One tall indoor potted plant in the back corner, in a white or stone-colored ceramic pot",
+                remove: "decorative throw pillows, footstools, window sill plants, bright-colored accents",
+                lighting: "extremely bright natural daylight filling the room — soft yet intense, with well-defined soft shadows and high overall ambient brightness",
+                prompt_template: "Generate a realistic <style> -style bedroom interior scene featuring the exact same product: a <product_description> as in the reference image, placed against the wall as hero product.\n\n<preservation>\n\nStyle: <style>\n\nColor harmony: <color>\nSetting: <setting>\n\nScene Elements: <scene_elements>\n\nRemove: <remove>\nLighting: <lighting>\n\nCamera view: <camera_view>"
+            },
+            SELECT_OPTIONS: {
+                style: ["Modern", "Scandinavian", "Modern Nordic", "Scandinavian Minimalist", "Light Industrial", "American Farmhouse"],
+                category: ["Beds", "Chairs", "Tables", "Sofas", "Storage"],
+                camera_view: [
+                    "front-centered perspective, highlighting the overall bed design and symmetry", "front view from above", "slightly front-left perspective",
+                    "30-degree front-left perspective", "45-degree front-left perspective", "slightly front-right perspective",
+                    "30-degree front-right perspective", "45-degree front-right perspective", "direct left-side perspective, showing full side structure",
+                    "direct right-side perspective, showing full side structure", "slightly rear view", "top-down view"
+                ]
+            },
+            VALIDATION_RULES: {
+                product_description: { required: true, minLength: 3, maxLength: 2000 },
+                category: { required: true },
+                prompt_template: { required: true, minLength: 10, maxLength: 20000 },
+                preservation: { maxLength: 10000 }, color: { maxLength: 5000 },
+                setting: { maxLength: 5000 }, scene_elements: { maxLength: 10000 },
+                remove: { maxLength: 3000 }, lighting: { maxLength: 5000 }
+            }
+        };
+
         class PromptGenerator {
-            constructor() {
-                this.config = {
-                    MAX_INPUT_LENGTH: 50000, // Increased 10x from 5000
-                    MAX_JSON_SIZE: 1000000, // Increased 10x from 100KB to 1MB
-                    AUTO_GENERATE_DELAY: 500,
-                    VALIDATION_RULES: {
-                        product_description: { required: true, minLength: 3, maxLength: 2000 }, // 10x from 200
-                        category: { required: true },
-                        prompt_template: { required: true, minLength: 10, maxLength: 20000 }, // 10x from 2000
-                        preservation: { maxLength: 10000 }, // 10x from 1000
-                        color: { maxLength: 5000 }, // 10x from 500
-                        setting: { maxLength: 5000 }, // 10x from 500
-                        scene_elements: { maxLength: 10000 }, // 10x from 1000
-                        remove: { maxLength: 3000 }, // 10x from 300
-                        lighting: { maxLength: 5000 } // 10x from 500
+            #config; #variableColors; #state; #abortController;
+            constructor(config) {
+                this.#config = config;
+                this.#variableColors = { 'style': 'var-style', 'product_description': 'var-product_description', 'category': 'var-category', 'preservation': 'var-preservation', 'color': 'var-color', 'setting': 'var-setting', 'scene_elements': 'var-scene_elements', 'remove': 'var-remove', 'lighting': 'var-lighting', 'camera_view': 'var-camera_view' };
+                this.#state = { cleanJSON: '', cleanText: '', timeouts: new Set(), currentProductDescription: '' };
+                this.#abortController = new AbortController();
+                this.#init();
+            }
+
+            showMessage(message, type = 'error', duration = 5000) {
+                const container = this.#safeGetElement('message-container'); if (!container) return;
+                container.innerHTML = '';
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.textContent = message;
+                container.appendChild(messageDiv);
+                const timeoutId = setTimeout(() => {
+                    if (container.contains(messageDiv)) container.removeChild(messageDiv);
+                    this.#state.timeouts.delete(timeoutId);
+                }, duration);
+                this.#state.timeouts.add(timeoutId);
+            }
+
+            cleanup() { this.#abortController.abort(); this.#state.timeouts.forEach(clearTimeout); this.#state.timeouts.clear(); }
+
+            #init() {
+                try {
+                    this.#populateSelects();
+                    this.#loadDraft();
+                    this.#setupEventListeners();
+                    this.#generateOutput();
+                } catch (error) { this.showMessage(`Initialization failed: ${error.message}`, 'error'); }
+            }
+            
+            #importFromJson() {
+                this.#clearMessages();
+                const jsonTextArea = this.#safeGetElement('json_import');
+                if (!jsonTextArea || !jsonTextArea.value.trim()) return this.showMessage('Please paste JSON configuration to import.', 'error');
+                const jsonText = jsonTextArea.value.trim();
+                if (jsonText.length > this.#config.MAX_JSON_SIZE) return this.showMessage(`JSON too large. Max size: ${this.#config.MAX_JSON_SIZE / 1000}KB.`, 'error');
+                try {
+                    const jsonData = this.#secureJsonParse(jsonText);
+                    if (!this.#validateJsonStructure(jsonData)) throw new Error('JSON structure is not compatible.');
+                    this.#populateFormFromJson(jsonData);
+                    this.#generateOutput();
+                    this.showMessage('JSON configuration imported successfully!', 'success');
+                } catch (e) { this.showMessage(`Import failed: ${e.message}`, 'error'); }
+            }
+
+            #clearJsonImport() {
+                if (confirm('Are you sure you want to clear the import area?')) {
+                    this.#safeGetElement('json_import').value = '';
+                    this.#clearMessages();
+                    this.showMessage('JSON import area cleared.', 'success');
+                }
+            }
+
+            #resetForm() {
+                if (confirm('Are you sure you want to reset the entire form? This will clear all fields and saved data.')) {
+                    localStorage.removeItem(this.#config.STORAGE_KEY);
+                    this.#populateForm(this.#config.DEFAULT_VALUES);
+                    this.#generateOutput();
+                    this.showMessage('Form has been reset to default values.', 'success');
+                }
+            }
+
+            async #copyToClipboard(type) {
+                const textToCopy = type === 'json' ? this.#state.cleanJSON : this.#state.cleanText;
+                if (!textToCopy) return this.showMessage('Please generate output before copying!', 'error');
+                try {
+                    if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(textToCopy);
+                    else this.#fallbackCopyToClipboard(textToCopy);
+                    const button = this.#safeGetElement(`btn-copy-${type}`);
+                    if (button) {
+                        const originalContent = button.innerHTML;
+                        button.innerHTML = '✅ Copied!';
+                        button.disabled = true;
+                        setTimeout(() => { button.innerHTML = originalContent; button.disabled = false; }, 2000);
                     }
-                };
-
-                this.variableColors = {
-                    'style': 'var-style',
-                    'product_description': 'var-product_description',
-                    'category': 'var-category',
-                    'preservation': 'var-preservation',
-                    'color': 'var-color',
-                    'setting': 'var-setting',
-                    'scene_elements': 'var-scene_elements',
-                    'remove': 'var-remove',
-                    'lighting': 'var-lighting',
-                    'camera_view': 'var-camera_view'
-                };
-
-                this.state = {
-                    cleanJSON: '',
-                    cleanText: '',
-                    timeouts: new Set(),
-                    currentProductDescription: ''
-                };
-
-                this.rateLimiter = new RateLimiter(20, 60000);
-                this.init();
+                } catch (error) { this.showMessage(`Copy failed: ${error.message}`, 'error'); }
             }
 
-            init() {
-                this.setupEventListeners();
-                this.generateOutput();
-                this.setupKeyboardShortcuts();
+            #downloadFile(type) {
+                const content = type === 'json' ? this.#state.cleanJSON : this.#state.cleanText;
+                if (!content) return this.showMessage('Please generate output before downloading!', 'error');
+                const filename = this.#generateFilename(type);
+                const blob = new Blob([content], { type: type === 'json' ? 'application/json' : 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url; link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                this.showMessage(`${filename} downloaded successfully!`, 'success');
             }
+            
+            #secureJsonParse(jsonString, depth = 0) { if (depth > this.#config.MAX_JSON_DEPTH) throw new Error('JSON nesting too deep.'); return JSON.parse(jsonString); }
 
-            sanitizeInput(input, maxLength = 10000) { // Increased default from 1000
+            #sanitizeInput(input, maxLength) {
                 if (input == null) return '';
+                let sanitized = String(input).normalize('NFKC').trim();
+                
+                const templatePlaceholders = Object.keys(this.#variableColors).map(k => `<${k}>`);
+                const tokens = new Map();
 
-                let sanitized = String(input).trim();
-
-                sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '');
-
-                const templatePlaceholders = [
-                    '<style>', '<product_description>', '<category>', '<preservation>',
-                    '<color>', '<setting>', '<scene_elements>', '<remove>', 
-                    '<lighting>', '<camera_view>'
-                ];
-
-                const tokens = {};
                 templatePlaceholders.forEach((placeholder, index) => {
-                    const token = `__PLACEHOLDER_${index}__`;
-                    tokens[token] = placeholder;
-                    sanitized = sanitized.replace(new RegExp(this.escapeRegExp(placeholder), 'g'), token);
+                    const token = `__PLACEHOLDER_${index}_${Date.now()}__`;
+                    tokens.set(token, placeholder);
+                    sanitized = sanitized.replace(new RegExp(this.#escapeRegExp(placeholder), 'g'), token);
                 });
 
                 sanitized = sanitized.replace(/<[^>]*>/gi, '');
 
-                Object.entries(tokens).forEach(([token, placeholder]) => {
-                    sanitized = sanitized.replace(new RegExp(this.escapeRegExp(token), 'g'), placeholder);
+                tokens.forEach((placeholder, token) => {
+                    sanitized = sanitized.replace(new RegExp(this.#escapeRegExp(token), 'g'), placeholder);
                 });
-
-                sanitized = sanitized.replace(/(javascript|data|vbscript|file|about):/gi, '');
-
-                const xssPatterns = [
-                    /on\w+\s*=/gi,
-                    /expression\s*\(/gi,
-                    /javascript:/gi,
-                    /vbscript:/gi,
-                    /data:text\/html/gi,
-                    /data:application\/javascript/gi
-                ];
-
-                xssPatterns.forEach(pattern => {
-                    sanitized = sanitized.replace(pattern, '');
-                });
-
-                if (sanitized.length > maxLength) {
+                
+                if (maxLength && sanitized.length > maxLength) {
                     sanitized = sanitized.substring(0, maxLength);
                 }
-
                 return sanitized;
             }
 
-            validateInput(fieldId, value) {
-                const rules = this.config.VALIDATION_RULES[fieldId];
-                if (!rules) return { valid: true };
+            #validateInput(fieldId, value) {
+                const rules = this.#config.VALIDATION_RULES[fieldId];
+                const sanitizedValue = this.#sanitizeInput(value, rules ? rules.maxLength : undefined);
 
-                const sanitizedValue = this.sanitizeInput(value);
+                if (!rules) return { valid: true, value: sanitizedValue };
 
-                if (rules.required && !sanitizedValue.trim()) {
-                    return { 
-                        valid: false, 
-                        error: `${this.getFieldDisplayName(fieldId)} is required.` 
-                    };
-                }
-
-                if (!sanitizedValue && !rules.required) return { valid: true };
-
-                if (rules.minLength && sanitizedValue.length < rules.minLength) {
-                    return { 
-                        valid: false, 
-                        error: `${this.getFieldDisplayName(fieldId)} must be at least ${rules.minLength} characters.` 
-                    };
-                }
-
-                if (rules.maxLength && sanitizedValue.length > rules.maxLength) {
-                    return { 
-                        valid: false, 
-                        error: `${this.getFieldDisplayName(fieldId)} must not exceed ${rules.maxLength} characters.` 
-                    };
-                }
-
-                return { valid: true };
+                if (rules.required && !sanitizedValue.trim()) return { valid: false, error: `${this.#getFieldDisplayName(fieldId)} is required.` };
+                if (rules.minLength && sanitizedValue.length < rules.minLength) return { valid: false, error: `${this.#getFieldDisplayName(fieldId)} must be at least ${rules.minLength} characters.` };
+                return { valid: true, value: sanitizedValue };
             }
 
-            getFieldDisplayName(fieldId) {
-                const names = {
-                    product_description: 'Product Description',
-                    category: 'Category',
-                    prompt_template: 'Prompt Template',
-                    preservation: 'Preservation Instructions',
-                    color: 'Color Harmony',
-                    setting: 'Setting',
-                    scene_elements: 'Scene Elements',
-                    remove: 'Remove',
-                    lighting: 'Lighting'
-                };
-                return names[fieldId] || fieldId.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-            }
-
-            safeCreateElement(tag, className, textContent) {
-                const element = document.createElement(tag);
-                if (className) element.className = className;
-                if (textContent) element.textContent = textContent;
-                return element;
-            }
-
-            safeGetElement(id) {
-                const element = document.getElementById(id);
-                if (!element) {
-                    console.warn(`Element not found: ${id}`);
-                    return null;
-                }
-                return element;
-            }
-
-            checkRateLimit() {
-                if (!this.rateLimiter.isAllowed()) {
-                    this.showMessage('Rate limit exceeded. Please wait a moment before trying again.');
-                    return false;
-                }
-                return true;
-            }
-
-            debounce(func, wait) {
-                let timeout;
-                return (...args) => {
-                    if (timeout) {
-                        clearTimeout(timeout);
-                        this.state.timeouts.delete(timeout);
-                    }
-                    timeout = setTimeout(() => {
-                        func.apply(this, args);
-                        this.state.timeouts.delete(timeout);
-                    }, wait);
-                    this.state.timeouts.add(timeout);
-                };
-            }
-
-            generateObjectId() {
-                const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
-                const chars = '0123456789abcdef';
-                let randomPart = '';
+            #getFieldDisplayName(fieldId) { return fieldId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); }
+            #safeGetElement(id) { const el = document.getElementById(id); if (!el) console.warn(`Element not found: ${id}`); return el; }
+            #debounce(func, wait) { let timeout; return (...args) => { if (timeout) clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); }; }
+            #escapeHtml(text) { const p = document.createElement('p'); p.textContent = text; return p.innerHTML; }
+            #escapeRegExp(string) { return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+            #clearMessages() { const container = this.#safeGetElement('message-container'); if (container) container.innerHTML = ''; }
+            
+            #updateFieldValidationState(fieldId, validationResult) {
+                const element = this.#safeGetElement(fieldId);
+                const errorContainer = this.#safeGetElement(`${fieldId}-error`);
+                if (!element || !errorContainer) return;
                 
-                for (let i = 0; i < 16; i++) {
-                    randomPart += chars[Math.floor(Math.random() * 16)];
-                }
-
-                return timestamp + randomPart;
+                const isValid = validationResult.valid;
+                element.dataset.validation = isValid ? 'valid' : 'invalid';
+                element.setAttribute('aria-invalid', !isValid);
+                errorContainer.textContent = isValid ? '' : validationResult.error;
             }
-
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = String(text || '');
-                return div.innerHTML;
-            }
-
-            escapeRegExp(string) {
-                return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            }
-
-            showMessage(message, type = 'error') {
-                const container = this.safeGetElement('message-container');
-                if (!container) return;
-
-                container.innerHTML = '';
-                const messageDiv = this.safeCreateElement('div', `message ${type}`, message);
-                container.appendChild(messageDiv);
-
-                const timeoutId = setTimeout(() => {
-                    if (container.contains(messageDiv)) {
-                        container.removeChild(messageDiv);
+            
+            #highlightJson(jsonStr) { if (!jsonStr) return ''; return this.#escapeHtml(jsonStr).replace(/("(\$oid|id)":\s*)("((?:[^"\\]|\\.)*)")/g, '$1<span class="json-objectid">$3</span>').replace(/("(\$date)":\s*)("((?:[^"\\]|\\.)*)")/g, '$1<span class="json-date">$3</span>').replace(/^(\s*)("(?:[^"\\]|\\.)*")(\s*:\s*)/gm, '$1<span class="json-key">$2</span>$3').replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span class="json-string">$1</span>').replace(/:\s*(-?\d+(?:\d+)?(?:[eE][+-]?\d+)?)/g, ': <span class="json-number">$1</span>').replace(/:\s*(true|false)/g, ': <span class="json-boolean">$1</span>').replace(/:\s*(null)/g, ': <span class="json-null">$1</span>'); }
+            #validateJsonStructure(jsonData) { return !!(jsonData && typeof jsonData === 'object' && !Array.isArray(jsonData) && (jsonData.prompt_parameters || Object.keys(this.#variableColors).some(key => jsonData[key] !== undefined))); }
+            
+            #populateSelects() {
+                Object.entries(this.#config.SELECT_OPTIONS).forEach(([id, options]) => {
+                    const select = this.#safeGetElement(id);
+                    if (select) {
+                        select.innerHTML = '';
+                        options.forEach(optionValue => {
+                            const option = document.createElement('option');
+                            option.value = option.textContent = optionValue;
+                            select.appendChild(option);
+                        });
                     }
-                    this.state.timeouts.delete(timeoutId);
-                }, 5000);
-                this.state.timeouts.add(timeoutId);
-            }
-
-            clearMessages() {
-                const container = this.safeGetElement('message-container');
-                if (container) container.innerHTML = '';
-            }
-
-            updateFieldValidation(fieldId, isValid) {
-                const element = this.safeGetElement(fieldId);
-                if (!element) return;
-
-                element.classList.remove('field-invalid', 'field-valid');
-                if (isValid !== undefined) {
-                    element.classList.add(isValid ? 'field-valid' : 'field-invalid');
-                }
-            }
-
-            highlightJson(jsonStr) {
-                if (!jsonStr) return '';
-
-                const container = document.createElement('div');
-                container.textContent = jsonStr;
-
-                const escaped = container.innerHTML;
-
-                let highlighted = escaped;
-
-                const patterns = [
-                    [/^(\s*)("(?:[^"\\]|\\.)*")(\s*:\s*)/gm, '$1<span class="json-key">$2</span>$3'],
-                    [/:\s*("(?:[^"\\]|\\.)*")([,\s\n\r\}]*)/g, ': <span class="json-string">$1</span>$2'],
-                    [/:\s*(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)([,\s\n\r\}]*)/g, ': <span class="json-number">$1</span>$2'],
-                    [/:\s*(true|false)([,\s\n\r\}]*)/g, ': <span class="json-boolean">$1</span>$2'],
-                    [/:\s*(null)([,\s\n\r\}]*)/g, ': <span class="json-null">$1</span>$2'],
-                    [/("\$oid":\s*)("(?:[^"\\]|\\.)*")/g, '$1<span class="json-objectid">$2</span>'],
-                    [/("\$date":\s*)("(?:[^"\\]|\\.)*")/g, '$1<span class="json-date">$2</span>']
-                ];
-
-                patterns.forEach(([pattern, replacement]) => {
-                    highlighted = highlighted.replace(pattern, replacement);
                 });
-
-                return highlighted;
             }
 
-            highlightText(text, values) {
-                if (!text) {
-                    return '';
-                }
-
-                const container = document.createElement('div');
-                container.textContent = text;
-                let highlighted = container.innerHTML;
-
-                if (!values) {
-                    return highlighted;
-                }
-
-                const sortedEntries = Object.entries(values)
-                    .filter(([key, value]) => {
-                        const val = String(value || '').trim();
-                        return val && this.variableColors[key] && text.includes(val);
-                    })
-                    .sort(([, a], [, b]) => String(b).length - String(a).length);
-
-                sortedEntries.forEach(([key, value]) => {
-                    const cleanValue = this.sanitizeInput(value);
-                    if (!cleanValue) return;
-
-                    const valueContainer = document.createElement('div');
-                    valueContainer.textContent = cleanValue;
-                    const escapedValue = valueContainer.innerHTML;
-                    
-                    if (!escapedValue) return;
-
-                    const pattern = new RegExp(this.escapeRegExp(escapedValue), 'g');
-                    highlighted = highlighted.replace(pattern, `<span class="${this.variableColors[key]}">${escapedValue}</span>`);
+            #populateForm(data) {
+                const allFieldIds = [...Object.keys(this.#config.VALIDATION_RULES), ...Object.keys(this.#config.SELECT_OPTIONS), 'prompt_template'];
+                allFieldIds.forEach(id => {
+                    const el = this.#safeGetElement(id);
+                    if (el && data[id] !== undefined) {
+                        el.value = data[id];
+                    }
                 });
-
-                return highlighted;
             }
 
-            importFromJson() {
+            #populateFormFromJson(jsonData) { this.#populateForm(jsonData.prompt_parameters || jsonData); }
+
+            #generateOutput() {
                 try {
-                    if (!this.checkRateLimit()) return;
-                    
-                    this.clearMessages();
-                    
-                    const jsonTextArea = this.safeGetElement('json_import');
-                    if (!jsonTextArea || !jsonTextArea.value.trim()) {
-                        this.showMessage('Please paste JSON configuration to import.');
-                        return;
-                    }
-
-                    const jsonText = jsonTextArea.value.trim();
-                    
-                    if (jsonText.length > this.config.MAX_JSON_SIZE) {
-                        this.showMessage(`JSON too large. Maximum size is ${this.config.MAX_JSON_SIZE / 1000}KB.`);
-                        return;
-                    }
-
-                    let jsonData;
-                    try {
-                        jsonData = JSON.parse(jsonText);
-                    } catch (parseError) {
-                        this.showMessage('Invalid JSON format. Please check your JSON and try again.');
-                        return;
-                    }
-
-                    if (!this.validateJsonStructure(jsonData)) {
-                        this.showMessage('JSON structure is not compatible with this tool.');
-                        return;
-                    }
-
-                    this.populateFormFromJson(jsonData);
-                    
-                    this.generateOutput();
-                    
-                    this.showMessage('JSON configuration imported successfully!', 'success');
-                    
-                } catch (error) {
-                    console.error('Import error:', error);
-                    this.showMessage(`Import failed: ${error.message}`);
+                    const formData = this.#getFormData();
+                    this.#state.currentProductDescription = formData.product_description || 'prompt';
+                    localStorage.setItem(this.#config.STORAGE_KEY, JSON.stringify(formData));
+                    const jsonData = this.#createJsonData(formData);
+                    this.#state.cleanJSON = JSON.stringify(jsonData, null, 2);
+                    this.#safeGetElement('json-output').innerHTML = this.#highlightJson(this.#state.cleanJSON);
+                    this.#createTextPromptAndHighlight(formData);
+                } catch (e) {
+                    this.showMessage(e.message, 'error');
+                    this.#resetOutputs();
                 }
             }
 
-            validateJsonStructure(jsonData) {
-                if (!jsonData || typeof jsonData !== 'object') {
-                    return false;
+            #getFormData() {
+                const fields = [...Object.keys(this.#config.VALIDATION_RULES), ...Object.keys(this.#config.SELECT_OPTIONS), 'prompt_template'];
+                const values = {}; const errors = []; let allValid = true;
+                for (const id of fields) {
+                    const el = this.#safeGetElement(id); if (!el) continue;
+                    const validation = this.#validateInput(id, el.value);
+                    values[id] = validation.value;
+                    this.#updateFieldValidationState(id, validation);
+                    if (!validation.valid) { errors.push(validation.error); allValid = false; }
                 }
-
-                return jsonData.prompt_parameters || 
-                       (jsonData.style || jsonData.product_description || jsonData.category);
-            }
-
-            populateFormFromJson(jsonData) {
-                let parameters = jsonData.prompt_parameters || jsonData;
-                
-                const fieldMappings = {
-                    'style': 'style',
-                    'product_description': 'product_description',
-                    'category': 'category',
-                    'preservation': 'preservation',
-                    'color': 'color',
-                    'setting': 'setting',
-                    'scene_elements': 'scene_elements',
-                    'remove': 'remove',
-                    'lighting': 'lighting',
-                    'camera_view': 'camera_view'
-                };
-
-                Object.entries(fieldMappings).forEach(([jsonKey, formFieldId]) => {
-                    const element = this.safeGetElement(formFieldId);
-                    if (element && parameters[jsonKey] !== undefined) {
-                        if (element instanceof HTMLInputElement || 
-                            element instanceof HTMLTextAreaElement || 
-                            element instanceof HTMLSelectElement) {
-                            element.value = this.sanitizeInput(parameters[jsonKey]);
-                            
-                            const validation = this.validateInput(formFieldId, element.value);
-                            this.updateFieldValidation(formFieldId, validation.valid);
-                        }
-                    }
-                });
-
-                if (jsonData.prompt_template) {
-                    const templateElement = this.safeGetElement('prompt_template');
-                    if (templateElement && templateElement instanceof HTMLTextAreaElement) {
-                        templateElement.value = this.sanitizeInput(jsonData.prompt_template);
-                        const validation = this.validateInput('prompt_template', templateElement.value);
-                        this.updateFieldValidation('prompt_template', validation.valid);
-                    }
-                }
-            }
-
-            clearJsonImport() {
-                const jsonTextArea = this.safeGetElement('json_import');
-                if (jsonTextArea && jsonTextArea instanceof HTMLTextAreaElement) {
-                    jsonTextArea.value = '';
-                }
-                this.clearMessages();
-                this.showMessage('JSON import area cleared.', 'success');
-            }
-
-            generateOutput() {
-                try {
-                    this.clearMessages();
-
-                    const formData = this.getFormData();
-                    if (!formData) return;
-
-                    // Update current product description for filename generation
-                    this.state.currentProductDescription = formData.product_description || 'prompt';
-
-                    const jsonData = this.createJsonData(formData);
-                    const textPrompt = this.createTextPrompt(formData);
-
-                    this.updateOutputs(jsonData, textPrompt, formData);
-                } catch (error) {
-                    console.error('Generation error:', error);
-                    this.showMessage(`Generation failed: ${error.message}`);
-                    this.resetOutputs();
-                }
-            }
-
-            getFormData() {
-                const fields = [
-                    'product_description', 'category', 'preservation', 'camera_view',
-                    'color', 'style', 'lighting', 'scene_elements', 'remove',
-                    'setting', 'prompt_template'
-                ];
-
-                const values = {};
-                const errors = [];
-
-                fields.forEach(id => {
-                    const element = this.safeGetElement(id);
-                    if (!element) {
-                        console.warn(`Missing form element: ${id}`);
-                        return;
-                    }
-
-                    if (!(element instanceof HTMLInputElement || 
-                          element instanceof HTMLTextAreaElement || 
-                          element instanceof HTMLSelectElement)) {
-                        console.warn(`Invalid form element type: ${id}`);
-                        return;
-                    }
-
-                    const sanitized = this.sanitizeInput(element.value);
-                    const validation = this.validateInput(id, sanitized);
-
-                    values[id] = sanitized;
-                    this.updateFieldValidation(id, validation.valid);
-
-                    if (!validation.valid) errors.push(validation.error);
-                });
-
-                if (errors.length > 0) {
-                    this.showMessage(`Validation errors: ${errors.join(' ')}`);
-                    return null;
-                }
-
+                if (!allValid) throw new Error(`Please fix the following issues: ${errors.join(' ')}`);
                 return values;
             }
 
-            createJsonData(values) {
-                return {
-                    "_id": { "$oid": this.generateObjectId() },
-                    "name": values.product_description || "Untitled",
-                    "category": values.category || "General",
-                    "ai_type": "flux",
-                    "prompt_parameters": {
-                        "preservation": values.preservation || "",
-                        "camera_view": values.camera_view || "",
-                        "color": values.color || "",
-                        "style": values.style || "",
-                        "product_description": values.product_description || "",
-                        "lighting": values.lighting || "",
-                        "scene_elements": values.scene_elements || "",
-                        "remove": values.remove || "",
-                        "setting": values.setting || ""
-                    },
-                    "prompt_template": values.prompt_template || "",
-                    "createdAt": { "$date": new Date().toISOString() },
-                    "updatedAt": { "$date": new Date().toISOString() },
-                    "_class": "com.vidaxl.platformai.image.generation.domain.ImageGenerationPrompt"
-                };
-            }
-
-            createTextPrompt(values) {
-                let textPrompt = values.prompt_template || '';
-                
-                console.log('Original template:', textPrompt);
-                console.log('Values object:', JSON.stringify(values, null, 2));
-                
-                if (!textPrompt.includes('<style>') && !textPrompt.includes('<product_description>')) {
-                    textPrompt = `Generate a realistic ${values.style || ''}-style bedroom interior scene featuring the exact same product: a ${values.product_description || ''} as in the reference image, placed against the wall as hero product.
-
-${values.preservation || ''}
-
-Style: ${values.style || ''}
-
-Color harmony: ${values.color || ''}
-Setting: ${values.setting || ''}
-
-Scene Elements: ${values.scene_elements || ''}
-
-Remove: ${values.remove || ''}
-Lighting: ${values.lighting || ''}
-
-Camera view: ${values.camera_view || ''}`;
-                } else {
-                    textPrompt = textPrompt.replace(/<style>/g, values.style || '');
-                    textPrompt = textPrompt.replace(/<product_description>/g, values.product_description || '');
-                    textPrompt = textPrompt.replace(/<category>/g, values.category || '');
-                    textPrompt = textPrompt.replace(/<preservation>/g, values.preservation || '');
-                    textPrompt = textPrompt.replace(/<color>/g, values.color || '');
-                    textPrompt = textPrompt.replace(/<setting>/g, values.setting || '');
-                    textPrompt = textPrompt.replace(/<scene_elements>/g, values.scene_elements || '');
-                    textPrompt = textPrompt.replace(/<remove>/g, values.remove || '');
-                    textPrompt = textPrompt.replace(/<lighting>/g, values.lighting || '');
-                    textPrompt = textPrompt.replace(/<camera_view>/g, values.camera_view || '');
-                }
-                
-                console.log('Final processed text:', textPrompt);
-                return textPrompt;
-            }
-
-            updateOutputs(jsonData, textPrompt, values) {
-                try {
-                    this.state.cleanJSON = JSON.stringify(jsonData, null, 2);
-                    this.state.cleanText = textPrompt;
-
-                    const jsonOutput = this.safeGetElement('json-output');
-                    const textOutput = this.safeGetElement('text-output');
-
-                    if (jsonOutput) {
-                        jsonOutput.innerHTML = this.highlightJson(this.state.cleanJSON);
-                    }
-
-                    if (textOutput) {
-                        console.log('Text Prompt:', textPrompt);
-                        console.log('Values:', values);
-                        
-                        textOutput.innerHTML = this.highlightText(textPrompt, values);
-                    }
-                } catch (error) {
-                    console.error('Output update error:', error);
-                    this.showMessage('Failed to update outputs');
-                }
-            }
-
-            resetOutputs() {
-                this.state.cleanJSON = '';
-                this.state.cleanText = '';
-
-                const elements = ['json-output', 'text-output'];
-                elements.forEach(id => {
-                    const element = this.safeGetElement(id);
-                    if (element) {
-                        element.textContent = 'Error generating output. Please check your inputs and try again.';
-                    }
-                });
-            }
-
-            async copyToClipboard(type) {
-                try {
-                    if (!this.checkRateLimit()) return;
-
-                    const textToCopy = type === 'json' ? this.state.cleanJSON : this.state.cleanText;
-
-                    if (!textToCopy || !textToCopy.trim()) {
-                        this.showMessage('Please generate output first before copying!');
-                        return;
-                    }
-
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(textToCopy);
-                    } else {
-                        this.fallbackCopyToClipboard(textToCopy);
-                    }
-
-                    this.showMessage(`${type.toUpperCase()} copied to clipboard!`, 'success');
-                } catch (error) {
-                    console.error('Copy failed:', error);
-                    this.showMessage('Copy failed. Please select and copy manually.');
-                }
-            }
-
-            fallbackCopyToClipboard(text) {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
-                textArea.setAttribute('readonly', 'readonly');
-
-                document.body.appendChild(textArea);
-                try {
-                    textArea.select();
-                    textArea.setSelectionRange(0, 99999);
-                    if (!document.execCommand('copy')) {
-                        throw new Error('Fallback copy failed');
-                    }
-                } finally {
-                    document.body.removeChild(textArea);
-                }
-            }
-
-            // New download functionality
-            generateFilename(type) {
-                // Sanitize product description for filename
-                const productDesc = this.state.currentProductDescription || 'prompt';
-                let filename = productDesc
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\s]/g, '') // Remove special characters
-                    .replace(/\s+/g, '_')        // Replace spaces with underscores
-                    .substring(0, 50);           // Limit length
-                
-                // Ensure filename is not empty
-                if (!filename) {
-                    filename = 'prompt';
-                }
-
-                const extension = type === 'json' ? '.json' : '.txt';
-                return filename + extension;
-            }
-
-            downloadFile(type) {
-                try {
-                    if (!this.checkRateLimit()) return;
-
-                    const content = type === 'json' ? this.state.cleanJSON : this.state.cleanText;
-
-                    if (!content || !content.trim()) {
-                        this.showMessage('Please generate output first before downloading!');
-                        return;
-                    }
-
-                    const filename = this.generateFilename(type);
-                    const mimeType = type === 'json' ? 'application/json' : 'text/plain';
-
-                    // Create blob and download
-                    const blob = new Blob([content], { type: mimeType });
-                    const url = URL.createObjectURL(blob);
-
-                    // Create temporary download link
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = filename;
-                    link.style.display = 'none';
-
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    // Clean up the URL object
-                    URL.revokeObjectURL(url);
-
-                    this.showMessage(`${filename} downloaded successfully!`, 'success');
-                } catch (error) {
-                    console.error('Download failed:', error);
-                    this.showMessage('Download failed. Please try copying the content instead.');
-                }
-            }
-
-            setupEventListeners() {
-                const inputs = document.querySelectorAll('input, select, textarea');
-                const debouncedGenerate = this.debounce(() => this.generateOutput(), this.config.AUTO_GENERATE_DELAY);
-
-                inputs.forEach(input => {
-                    if (input.id === 'json_import') return;
-
-                    const eventHandler = () => {
-                        this.clearMessages();
-
-                        if (input.id && this.config.VALIDATION_RULES[input.id]) {
-                            const validation = this.validateInput(input.id, input.value);
-                            this.updateFieldValidation(input.id, validation.valid);
-                        }
-
-                        debouncedGenerate();
-                    };
-
-                    ['input', 'change'].forEach(eventType => {
-                        input.addEventListener(eventType, eventHandler);
-                    });
-
-                    input.addEventListener('paste', () => {
-                        setTimeout(() => {
-                            if (input instanceof HTMLInputElement || 
-                                input instanceof HTMLTextAreaElement) {
-                                const sanitized = this.sanitizeInput(input.value);
-                                if (sanitized !== input.value) {
-                                    input.value = sanitized;
-                                    this.showMessage('Pasted content was sanitized for security.', 'success');
-                                }
-                            }
-                        }, 10);
-                    });
-                });
-            }
-
-            setupKeyboardShortcuts() {
-                const shortcuts = {
-                    'g': () => this.generateOutput(),
-                    'j': () => this.copyToClipboard('json'),
-                    't': () => this.copyToClipboard('text'),
-                    'i': () => this.importFromJson(),
-                    'd': () => this.downloadFile('json')
-                };
-
-                document.addEventListener('keydown', (event) => {
-                    if ((event.ctrlKey || event.metaKey) && shortcuts[event.key.toLowerCase()]) {
-                        event.preventDefault();
-                        shortcuts[event.key.toLowerCase()]();
-                    }
-                });
-            }
-
-            cleanup() {
-                this.state.timeouts.forEach(timeoutId => {
-                    clearTimeout(timeoutId);
-                });
-                this.state.timeouts.clear();
-            }
-        }
-
-        class RateLimiter {
-            constructor(maxRequests = 10, windowMs = 60000) {
-                this.requests = [];
-                this.maxRequests = maxRequests;
-                this.windowMs = windowMs;
-            }
+            #createJsonData(v) { return { _id: { $oid: crypto.getRandomValues(new Uint8Array(12)).reduce((s, b) => s + b.toString(16).padStart(2, '0'), '') }, name: v.product_description || "Untitled", category: v.category || "General", ai_type: "flux", prompt_parameters: { ...v }, prompt_template: v.prompt_template || "", createdAt: { $date: new Date().toISOString() }, updatedAt: { $date: new Date().toISOString() }, _class: "com.vidaxl.platformai.image.generation.domain.ImageGenerationPrompt" }; }
             
-            isAllowed() {
-                const now = Date.now();
-                this.requests = this.requests.filter(time => now - time < this.windowMs);
-                
-                if (this.requests.length >= this.maxRequests) {
-                    return false;
+            #createTextPromptAndHighlight(formData) {
+                let cleanText = formData.prompt_template || '';
+                let highlightedHtml = formData.prompt_template || '';
+
+                for (const key in formData) {
+                    if (key === 'prompt_template') continue;
+                    
+                    const value = formData[key] || '';
+                    const placeholderRegex = new RegExp(this.#escapeRegExp(`<${key}>`), 'g');
+                    
+                    cleanText = cleanText.replace(placeholderRegex, value);
+                    
+                    const colorClass = this.#variableColors[key] || '';
+                    const escapedValue = this.#escapeHtml(value).replace(/\n/g, '<br>');
+                    const highlightedValueSpan = `<span class="${colorClass}">${escapedValue}</span>`;
+                    highlightedHtml = highlightedHtml.replace(placeholderRegex, highlightedValueSpan);
                 }
                 
-                this.requests.push(now);
-                return true;
+                this.#state.cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
+                this.#safeGetElement('text-output').innerHTML = highlightedHtml.replace(/\n/g, '<br>');
+            }
+
+            #resetOutputs() { this.#state.cleanJSON = ''; this.#state.cleanText = ''; const jsonOutput = this.#safeGetElement('json-output'); const textOutput = this.#safeGetElement('text-output'); if (jsonOutput) jsonOutput.textContent = 'Error generating output.'; if (textOutput) textOutput.textContent = 'Error generating output.'; }
+            #fallbackCopyToClipboard(text) { const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;'; ta.readOnly = true; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) { throw new Error('Fallback copy failed.'); } finally { document.body.removeChild(ta); } }
+            #generateFilename(type) { let filename = (this.#state.currentProductDescription || 'prompt').toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '_').substring(0, 50) || 'prompt'; return `${filename}.${type === 'json' ? 'json' : 'txt'}`; }
+            
+            #loadDraft() {
+                const savedDraft = localStorage.getItem(this.#config.STORAGE_KEY);
+                // Start with a fresh copy of the default values.
+                let dataToLoad = { ...this.#config.DEFAULT_VALUES };
+
+                if (savedDraft) {
+                    try {
+                        const parsedDraft = this.#secureJsonParse(savedDraft);
+                        // Merge the saved data over the defaults.
+                        dataToLoad = { ...dataToLoad, ...parsedDraft };
+                    } 
+                    catch (e) {
+                        // If parsing fails, the saved data is corrupt. Remove it.
+                        localStorage.removeItem(this.#config.STORAGE_KEY);
+                    }
+                }
+
+                // **CRITICAL FIX:** After loading, if the prompt template is empty for any reason,
+                // restore it from the default configuration. This prevents a blank template.
+                if (!dataToLoad.prompt_template) {
+                    dataToLoad.prompt_template = this.#config.DEFAULT_VALUES.prompt_template;
+                }
+
+                this.#populateForm(dataToLoad);
+            }
+
+            #setupEventListeners() {
+                const signal = this.#abortController.signal;
+                const debouncedGenerate = this.#debounce(() => this.#generateOutput(), this.#config.AUTO_GENERATE_DELAY);
+                document.querySelectorAll('input, select, textarea').forEach(input => {
+                    if (input.id === 'json_import') return;
+                    ['input', 'change'].forEach(type => input.addEventListener(type, () => { this.#clearMessages(); debouncedGenerate(); }, { signal }));
+                });
+                const buttonActions = { 
+                    'btn-import-json': () => this.#importFromJson(), 'btn-clear-import': () => this.#clearJsonImport(),
+                    'btn-reset-form': () => this.#resetForm(),
+                    'btn-copy-json': () => this.#copyToClipboard('json'), 'btn-copy-text': () => this.#copyToClipboard('text'),
+                    'btn-download-json': () => this.#downloadFile('json'), 'btn-download-txt': () => this.#downloadFile('text')
+                };
+                for (const id in buttonActions) this.#safeGetElement(id)?.addEventListener('click', buttonActions[id], { signal });
             }
         }
-
-        let app;
         
-        const initializeApp = () => {
+        document.addEventListener('DOMContentLoaded', () => {
+            let appInstance;
             try {
-                app = new PromptGenerator();
+                appInstance = new PromptGenerator(APP_CONFIG);
             } catch (error) {
                 console.error('Failed to initialize app:', error);
-                document.body.innerHTML = `
-                    <div style="padding: 20px; text-align: center; color: #d32f2f;">
-                        <h2>Application Error</h2>
-                        <p>Failed to initialize. Please refresh the page.</p>
-                        <p style="font-size: 12px; color: #666;">Error: ${error.message}</p>
-                    </div>
-                `;
+                document.body.innerHTML = `<div style="padding:20px;text-align:center;color:red;background-color:#fdd;border-radius:8px;margin:20px;"><h2>Application Error</h2><p>Failed to load. Please refresh.</p><p style="font-size:12px;color:#666">Error: ${error.message}</p></div>`;
+                // Stop execution if initialization fails
+                return;
             }
-        };
 
-        window.addEventListener('error', (event) => {
-            console.error('Global error:', event.error);
-            if (app && app.showMessage) {
-                app.showMessage('An unexpected error occurred. Please refresh the page.');
-            }
+            // Setup global listeners that depend on the app instance
+            window.addEventListener('error', (e) => {
+                console.error('Global error:', e.error);
+                if (appInstance && typeof appInstance.showMessage === 'function') {
+                    appInstance.showMessage('An unexpected error occurred. Please refresh.', 'error');
+                }
+            });
+
+            window.addEventListener('unhandledrejection', (e) => {
+                console.error('Unhandled promise rejection:', e.reason);
+                if (appInstance && typeof appInstance.showMessage === 'function') {
+                    appInstance.showMessage('An unexpected async error occurred. Please refresh.', 'error');
+                }
+            });
+
+            window.addEventListener('beforeunload', () => {
+                if (appInstance && typeof appInstance.cleanup === 'function') {
+                    appInstance.cleanup();
+                }
+            });
         });
-
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled promise rejection:', event.reason);
-            if (app && app.showMessage) {
-                app.showMessage('An unexpected error occurred. Please refresh the page.');
-            }
-        });
-
-        window.addEventListener('beforeunload', () => {
-            if (app && app.cleanup) {
-                app.cleanup();
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', initializeApp);
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        } else {
-            initializeApp();
-        }
     </script>
 </body>
-
 </html>
