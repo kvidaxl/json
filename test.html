@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        style-src 'self' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        script-src 'self' https://cdnjs.cloudflare.com;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'none';
+    ">
+    <title>Professional Prompt Engineering Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- LEFT PANE: CONTROLS -->
+        <aside class="controls-pane">
+            <header class="app-header">
+                <h1>Prompt Engineering Suite</h1>
+                <div class="header-actions">
+                    <button id="theme-toggle" class="btn-icon" title="Toggle Theme">🌓</button>
+                </div>
+            </header>
+
+            <!-- [REMOVED] The main navigation has been completely removed -->
+
+            <main id="views-container" class="views-container">
+                <!-- The main generator view is now the only view -->
+                <div id="view-generator">
+                    <details class="section-accordion">
+                        <summary><h3>Import JSON</h3></summary>
+                        <div class="section-content">
+                            <div class="field">
+                                <label for="json_import">Paste JSON Configuration:</label>
+                                <textarea id="json_import" placeholder="Paste your JSON config to populate the form..." rows="6"></textarea>
+                            </div>
+                            <div class="buttons">
+                                <button id="btn-upload-json" class="btn-primary">📂 Upload JSON File</button>
+                                <input type="file" id="json-file-input" accept=".json,application/json" hidden>
+                                <button id="btn-import-json">Import from Text</button>
+                                <button id="btn-clear-import" class="btn-reset">Clear</button>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details id="variables-accordion" class="section-accordion" open>
+                        <summary class="variables-header">
+                            <h3>Prompt Variables</h3>
+                            <button id="btn-reset-form" class="btn-reset btn-subtle">Reset to Defaults</button>
+                        </summary>
+                        <div class="section-content">
+                            <div class="form-row">
+                                <div class="field"><label for="style">Style Keyword <span class="variable-tag style">&lt;style&gt;</span></label><select id="style"></select></div>
+                                <div class="field"><label for="category">Category <span class="variable-tag category">&lt;category&gt;</span></label><select id="category"></select></div>
+                            </div>
+                            <div class="field"><label for="product_description">Product Description <span class="variable-tag product_description">&lt;product_description&gt;</span></label><input type="text" id="product_description"></div>
+                            <div class="field"><label for="preservation">Preservation Instructions <span class="variable-tag preservation">&lt;preservation&gt;</span></label><textarea id="preservation" rows="5"></textarea></div>
+                            <div class="field"><label for="color">Color Harmony <span class="variable-tag color">&lt;color&gt;</span></label><textarea id="color" rows="2"></textarea></div>
+                            <div class="field"><label for="setting">Setting <span class="variable-tag setting">&lt;setting&gt;</span></label><textarea id="setting" rows="2"></textarea></div>
+                            <div class="field"><label for="scene_elements">Scene Elements <span class="variable-tag scene_elements">&lt;scene_elements&gt;</span></label><textarea id="scene_elements" rows="5"></textarea></div>
+                            <div class="field"><label for="remove">Remove <span class="variable-tag remove">&lt;remove&gt;</span></label><input type="text" id="remove"></div>
+                            <div class="field"><label for="lighting">Lighting <span class="variable-tag lighting">&lt;lighting&gt;</span></label><textarea id="lighting" rows="2"></textarea></div>
+                            <div class="field"><label for="camera_view">Camera View <span class="variable-tag camera_view">&lt;camera_view&gt;</span></label><select id="camera_view"></select></div>
+                        </div>
+                    </details>
+
+                    <details class="section-accordion" open>
+                        <summary><h3>Prompt Template</h3></summary>
+                        <div class="section-content">
+                            <div class="field">
+                                <label for="prompt_template">Template Editor:</label>
+                                <div class="editor-container">
+                                    <div id="template-line-numbers" class="line-numbers"><span>1</span></div>
+                                    <textarea id="prompt_template" spellcheck="false"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- [REMOVED] The entire reverse engineer view is gone -->
+            </main>
+        </aside>
+
+        <!-- RIGHT PANE: LIVE OUTPUTS -->
+        <section id="output-pane" class="output-pane">
+            <header class="output-pane-header">
+                <div class="segmented-control output-view-control">
+                    <button id="btn-view-json" class="nav-button active" data-viewmode="json">JSON</button>
+                    <button id="btn-view-text" class="nav-button" data-viewmode="text">Text</button>
+                    <div class="nav-active-pill"></div>
+                </div>
+            </header>
+            <div class="output-pane-content">
+                <div class="output-wrapper" id="json-output-wrapper">
+                    <header class="output-header">
+                        <h3>JSON Output</h3>
+                        <div class="output-actions">
+                            <button id="btn-copy-json" class="btn-icon copy-btn" title="Copy JSON"></button>
+                            <button id="btn-download-json" class="btn-icon download-btn" title="Download JSON"></button>
+                        </div>
+                    </header>
+                    <pre class="output json-output" id="json-output">Generating...</pre>
+                </div>
+                <div class="output-wrapper" id="text-output-wrapper">
+                    <header class="output-header">
+                        <h3>Text Prompt Preview</h3>
+                        <div class="output-actions">
+                            <button id="btn-copy-text" class="btn-icon copy-btn" title="Copy Text"></button>
+                            <button id="btn-download-text" class="btn-icon download-btn" title="Download Text"></button>
+                        </div>
+                    </header>
+                    <div class="output text-output" id="text-output">Generating...</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAL DIALOG for confirmations -->
+    <div id="confirmation-modal" class="modal-overlay" hidden>
+        <div class="modal-dialog">
+            <h2 id="modal-title" class="modal-title">Confirm Action</h2>
+            <p id="modal-message">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button id="modal-btn-cancel" class="btn-reset">Cancel</button>
+                <button id="modal-btn-confirm" class="btn-primary">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION container -->
+    <div id="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
