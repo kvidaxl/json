@@ -34,6 +34,9 @@
                 --border-radius-sm: 4px; --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
                 --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.1);
                 --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+                --custom-var-color: #8e24aa; --custom-var-bg: #f3e5f5;
+                --add-var-color: #43a047; --add-var-hover: #388e3c;
+                --remove-var-color: #e53935; --remove-var-hover: #d32f2f;
             }
             * { box-sizing: border-box; }
             body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1000px; margin: 20px auto; padding: 24px; background-color: var(--bg-light); color: var(--text-color); line-height: 1.6; font-size: 16px; }
@@ -48,13 +51,29 @@
             label { display: block; margin-block-end: 8px; font-weight: 600; color: var(--text-color); }
             :is(input, select, textarea) { width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: var(--border-radius-sm); font-size: 14px; font-family: inherit; transition: border-color 0.2s ease, box-shadow 0.2s ease; background: var(--bg-white); }
             :is(input, select, textarea):focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(148, 21, 123, 0.1); }
-            textarea { resize: vertical; min-height: 80px; }
+            textarea { 
+                resize: vertical; 
+                min-height: 80px;
+                /* --- CSS POLISH: Constrain textarea resizing --- */
+                max-height: 450px; 
+            }
             .variable-tag { font-family: var(--font-mono); font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: var(--border-radius-sm); margin-inline-start: 8px; }
             .output { margin-top: 24px; padding: 20px; border: 1px solid var(--border-color); border-radius: var(--border-radius); font-size: 13px; line-height: 1.5; max-height: 500px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; }
             .message { padding: 16px; border-radius: var(--border-radius-sm); margin: 16px 0; font-weight: 500; border-inline-start: 4px solid; }
             .message.error { color: var(--error-color); background-color: var(--error-bg); border-inline-start-color: var(--error-color); }
             .message.success { color: #155724; background-color: #d4edda; border-inline-start-color: #155724; }
             .field .error-message { color: var(--error-color); font-size: 0.875rem; margin-top: 4px; font-weight: 500; min-height: 1.2rem; }
+            
+            /* Custom Variables Section */
+            .custom-variables-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+            .add-variable-form { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin-bottom: 20px; padding: 16px; background-color: #f8f9fa; border-radius: var(--border-radius-sm); border: 2px dashed var(--border-color); }
+            .add-variable-form .field { margin-bottom: 0; flex: 1; min-width: 150px; }
+            .add-variable-form input { font-size: 13px; padding: 8px 12px; }
+            .custom-variable-item { display: flex; align-items: start; gap: 12px; margin-bottom: 16px; padding: 12px; background-color: #fafafa; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); }
+            .custom-variable-item .field { flex: 1; margin-bottom: 0; }
+            .custom-variable-item .variable-name { font-family: var(--font-mono); font-weight: 600; color: var(--custom-var-color); margin-bottom: 4px; }
+            .remove-variable-btn { background: var(--remove-var-color); color: white; border: none; border-radius: var(--border-radius-sm); padding: 8px 12px; cursor: pointer; font-size: 12px; font-weight: 500; align-self: start; margin-top: 24px; }
+            .remove-variable-btn:hover { background: var(--remove-var-hover); }
         }
 
         @layer utilities {
@@ -68,6 +87,7 @@
             .var-remove, .variable-tag.remove { color: #c2185b; background-color: #fce4ec; }
             .var-lighting, .variable-tag.lighting { color: #f9a825; background-color: #fffde7; }
             .var-camera_view, .variable-tag.camera_view { color: #455a64; background-color: #eceff1; }
+            .var-custom, .variable-tag.custom { color: var(--custom-var-color); background-color: var(--custom-var-bg); }
             
             .buttons { display: flex; gap: 12px; margin: 24px 0; flex-wrap: wrap; justify-content: flex-start; }
             button { padding: 12px 24px; border: none; border-radius: var(--border-radius-sm); cursor: pointer; font-size: 14px; font-family: inherit; font-weight: 500; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
@@ -82,6 +102,8 @@
             .btn-download:hover:not(:disabled) { background: var(--download-hover); }
             .btn-reset { background: var(--reset-color); color: white; }
             .btn-reset:hover:not(:disabled) { background: var(--reset-hover); }
+            .btn-add-var { background: var(--add-var-color); color: white; padding: 8px 16px; font-size: 12px; }
+            .btn-add-var:hover:not(:disabled) { background: var(--add-var-hover); }
             
             .json-output { background: #1e1e1e; color: #d4d4d4; font-family: var(--font-mono); font-size: 12px; }
             .text-output { background: #f8f9fa; color: var(--text-color); font-family: inherit; border: 2px solid var(--primary-color); font-weight: 500; }
@@ -100,6 +122,9 @@
             button { justify-content: center; }
             .form-row { flex-direction: column; }
             .form-row .field { min-width: 100%; }
+            .add-variable-form { flex-direction: column; align-items: stretch; }
+            .custom-variable-item { flex-direction: column; }
+            .remove-variable-btn { margin-top: 8px; align-self: stretch; }
         }
     </style>
 </head>
@@ -179,6 +204,26 @@
         </div>
 
         <div class="section">
+            <div class="custom-variables-header">
+                <h3>Custom Variables</h3>
+            </div>
+            
+            <div class="add-variable-form">
+                <div class="field">
+                    <label for="new-var-name">Variable Name:</label>
+                    <input type="text" id="new-var-name" placeholder="e.g., background_music">
+                </div>
+                <div class="field">
+                    <label for="new-var-value">Variable Value:</label>
+                    <input type="text" id="new-var-value" placeholder="Enter variable value">
+                </div>
+                <button id="btn-add-variable" class="btn-add-var">+ Add Variable</button>
+            </div>
+            
+            <div id="custom-variables-container"></div>
+        </div>
+
+        <div class="section">
             <h3>Prompt Template</h3>
             <div class="field">
                 <label for="prompt_template">Template (Editable) :</label>
@@ -188,10 +233,11 @@
         </div>
 
         <div class="buttons">
-            <button id="btn-copy-json" class="btn-success">Copy JSON</button>
-            <button id="btn-copy-text" class="btn-success">Copy Text</button>
-            <button id="btn-download-json" class="btn-download">📥 Download JSON</button>
-            <button id="btn-download-txt" class="btn-download">📥 Download TXT</button>
+            <!-- --- UX FIX: Disable action buttons by default --- -->
+            <button id="btn-copy-json" class="btn-success" disabled>Copy JSON</button>
+            <button id="btn-copy-text" class="btn-success" disabled>Copy Text</button>
+            <button id="btn-download-json" class="btn-download" disabled>📥 Download JSON</button>
+            <button id="btn-download-txt" class="btn-download" disabled>📥 Download TXT</button>
             <button id="btn-reset-form" class="btn-reset">Reset Form</button>
         </div>
         
@@ -239,10 +285,17 @@
         };
 
         class PromptGenerator {
-            #config; #variableColors; #state; #abortController;
+            #config; #variableColors; #state; #abortController; #customVariables;
             constructor(config) {
                 this.#config = config;
-                this.#variableColors = { 'style': 'var-style', 'product_description': 'var-product_description', 'category': 'var-category', 'preservation': 'var-preservation', 'color': 'var-color', 'setting': 'var-setting', 'scene_elements': 'var-scene_elements', 'remove': 'var-remove', 'lighting': 'var-lighting', 'camera_view': 'var-camera_view' };
+                this.#variableColors = { 
+                    'style': 'var-style', 'product_description': 'var-product_description', 
+                    'category': 'var-category', 'preservation': 'var-preservation', 
+                    'color': 'var-color', 'setting': 'var-setting', 
+                    'scene_elements': 'var-scene_elements', 'remove': 'var-remove', 
+                    'lighting': 'var-lighting', 'camera_view': 'var-camera_view'
+                };
+                this.#customVariables = new Map();
                 this.#state = { cleanJSON: '', cleanText: '', timeouts: new Set(), currentProductDescription: '' };
                 this.#abortController = new AbortController();
                 this.#init();
@@ -250,6 +303,11 @@
 
             showMessage(message, type = 'error', duration = 5000) {
                 const container = this.#safeGetElement('message-container'); if (!container) return;
+                
+                // --- BUG FIX: Clear old timers to prevent race conditions ---
+                this.#state.timeouts.forEach(clearTimeout);
+                this.#state.timeouts.clear();
+
                 container.innerHTML = '';
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}`;
@@ -273,6 +331,101 @@
                 } catch (error) { this.showMessage(`Initialization failed: ${error.message}`, 'error'); }
             }
             
+            #addCustomVariable() {
+                const nameInput = this.#safeGetElement('new-var-name');
+                const valueInput = this.#safeGetElement('new-var-value');
+                
+                if (!nameInput || !valueInput) return;
+                
+                const name = nameInput.value.trim();
+                const value = valueInput.value.trim();
+                
+                if (!name) {
+                    this.showMessage('Variable name is required.', 'error');
+                    return;
+                }
+                
+                if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(name)) {
+                    this.showMessage('Variable name must start with a letter and contain only letters, numbers, and underscores.', 'error');
+                    return;
+                }
+                
+                if (this.#variableColors[name] || this.#customVariables.has(name)) {
+                    this.showMessage('A variable with this name already exists.', 'error');
+                    return;
+                }
+                
+                this.#customVariables.set(name, value);
+                this.#renderCustomVariables();
+                
+                nameInput.value = '';
+                valueInput.value = '';
+                
+                this.#generateOutput();
+                
+                this.showMessage(`Custom variable "${name}" added successfully!`, 'success', 3000);
+                
+                // --- UX FIX: Return focus to name input ---
+                nameInput.focus();
+            }
+            
+            #removeCustomVariable(name) {
+                if (this.#customVariables.has(name)) {
+                    this.#customVariables.delete(name);
+                    this.#renderCustomVariables();
+                    this.#generateOutput();
+                    this.showMessage(`Variable "${name}" removed.`, 'success', 3000);
+                }
+            }
+            
+            #updateCustomVariable(name, value) {
+                if (this.#customVariables.has(name)) {
+                    this.#customVariables.set(name, value);
+                    this.#generateOutput();
+                }
+            }
+            
+            #renderCustomVariables() {
+                const container = this.#safeGetElement('custom-variables-container');
+                if (!container) return;
+                
+                container.innerHTML = '';
+                
+                this.#customVariables.forEach((value, name) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'custom-variable-item';
+                    
+                    itemDiv.innerHTML = `
+                        <div class="field">
+                            <div class="variable-name">&lt;${name}&gt;</div>
+                            <label for="custom-${name}">Value:</label>
+                            <textarea id="custom-${name}" placeholder="Enter value for ${name}">${this.#escapeHtml(value)}</textarea>
+                        </div>
+                        <button class="remove-variable-btn" data-var-name="${name}">Remove</button>
+                    `;
+                    
+                    container.appendChild(itemDiv);
+                    
+                    const textarea = itemDiv.querySelector(`#custom-${name}`);
+                    if (textarea) {
+                        const debouncedUpdate = this.#debounce(() => {
+                            this.#updateCustomVariable(name, textarea.value);
+                        }, this.#config.AUTO_GENERATE_DELAY);
+                        
+                        textarea.addEventListener('input', debouncedUpdate, { signal: this.#abortController.signal });
+                    }
+                    
+                    const removeBtn = itemDiv.querySelector('.remove-variable-btn');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', () => {
+                            if (confirm(`Are you sure you want to remove the variable "${name}"?`)) {
+                                this.#removeCustomVariable(name);
+                            }
+                        }, { signal: this.#abortController.signal });
+                    }
+                });
+            }
+            
             #importFromJson() {
                 this.#clearMessages();
                 const jsonTextArea = this.#safeGetElement('json_import');
@@ -285,12 +438,17 @@
                     this.#populateFormFromJson(jsonData);
                     this.#generateOutput();
                     this.showMessage('JSON configuration imported successfully!', 'success');
+                    
+                    // --- UX FIX: Clear textarea on successful import ---
+                    jsonTextArea.value = '';
+
                 } catch (e) { this.showMessage(`Import failed: ${e.message}`, 'error'); }
             }
 
             #clearJsonImport() {
                 if (confirm('Are you sure you want to clear the import area?')) {
-                    this.#safeGetElement('json_import').value = '';
+                    const textarea = this.#safeGetElement('json_import');
+                    if(textarea) textarea.value = '';
                     this.#clearMessages();
                     this.showMessage('JSON import area cleared.', 'success');
                 }
@@ -299,6 +457,8 @@
             #resetForm() {
                 if (confirm('Are you sure you want to reset the entire form? This will clear all fields and saved data.')) {
                     localStorage.removeItem(this.#config.STORAGE_KEY);
+                    this.#customVariables.clear();
+                    this.#renderCustomVariables();
                     this.#populateForm(this.#config.DEFAULT_VALUES);
                     this.#generateOutput();
                     this.showMessage('Form has been reset to default values.', 'success');
@@ -342,10 +502,13 @@
                 if (input == null) return '';
                 let sanitized = String(input).normalize('NFKC').trim();
                 
-                const templatePlaceholders = Object.keys(this.#variableColors).map(k => `<${k}>`);
+                const allPlaceholders = [
+                    ...Object.keys(this.#variableColors).map(k => `<${k}>`),
+                    ...Array.from(this.#customVariables.keys()).map(k => `<${k}>`)
+                ];
                 const tokens = new Map();
 
-                templatePlaceholders.forEach((placeholder, index) => {
+                allPlaceholders.forEach((placeholder, index) => {
                     const token = `__PLACEHOLDER_${index}_${Date.now()}__`;
                     tokens.set(token, placeholder);
                     sanitized = sanitized.replace(new RegExp(this.#escapeRegExp(placeholder), 'g'), token);
@@ -373,13 +536,25 @@
                 if (rules.minLength && sanitizedValue.length < rules.minLength) return { valid: false, error: `${this.#getFieldDisplayName(fieldId)} must be at least ${rules.minLength} characters.` };
                 return { valid: true, value: sanitizedValue };
             }
-
+            
             #getFieldDisplayName(fieldId) { return fieldId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); }
             #safeGetElement(id) { const el = document.getElementById(id); if (!el) console.warn(`Element not found: ${id}`); return el; }
             #debounce(func, wait) { let timeout; return (...args) => { if (timeout) clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); }; }
             #escapeHtml(text) { const p = document.createElement('p'); p.textContent = text; return p.innerHTML; }
+            
+            // --- BUG FIX: Correctly escape special characters for RegExp ---
             #escapeRegExp(string) { return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+            
             #clearMessages() { const container = this.#safeGetElement('message-container'); if (container) container.innerHTML = ''; }
+            
+            // --- UX FIX: New helper method to manage button states ---
+            #updateActionButtonsState(enabled) {
+                const ids = ['btn-copy-json', 'btn-copy-text', 'btn-download-json', 'btn-download-txt'];
+                ids.forEach(id => {
+                    const btn = this.#safeGetElement(id);
+                    if (btn) btn.disabled = !enabled;
+                });
+            }
             
             #updateFieldValidationState(fieldId, validationResult) {
                 const element = this.#safeGetElement(fieldId);
@@ -419,17 +594,43 @@
                 });
             }
 
-            #populateFormFromJson(jsonData) { this.#populateForm(jsonData.prompt_parameters || jsonData); }
+            #populateFormFromJson(jsonData) { 
+                const data = jsonData.prompt_parameters || jsonData;
+                this.#populateForm(data);
+                
+                this.#customVariables.clear();
+                Object.keys(data).forEach(key => {
+                    if (!this.#variableColors[key] && 
+                        !Object.keys(this.#config.SELECT_OPTIONS).includes(key) && 
+                        !Object.keys(this.#config.VALIDATION_RULES).includes(key) && 
+                        key !== 'prompt_template') {
+                        this.#customVariables.set(key, data[key] || '');
+                    }
+                });
+                this.#renderCustomVariables();
+            }
 
             #generateOutput() {
                 try {
                     const formData = this.#getFormData();
                     this.#state.currentProductDescription = formData.product_description || 'prompt';
-                    localStorage.setItem(this.#config.STORAGE_KEY, JSON.stringify(formData));
+                    
+                    this.#customVariables.forEach((value, name) => {
+                        formData[name] = value;
+                    });
+                    
+                    localStorage.setItem(this.#config.STORAGE_KEY, JSON.stringify({
+                        ...formData,
+                        customVariables: Object.fromEntries(this.#customVariables)
+                    }));
+                    
                     const jsonData = this.#createJsonData(formData);
                     this.#state.cleanJSON = JSON.stringify(jsonData, null, 2);
                     this.#safeGetElement('json-output').innerHTML = this.#highlightJson(this.#state.cleanJSON);
                     this.#createTextPromptAndHighlight(formData);
+                    
+                    // --- UX FIX: Enable buttons on successful generation ---
+                    this.#updateActionButtonsState(true);
                 } catch (e) {
                     this.showMessage(e.message, 'error');
                     this.#resetOutputs();
@@ -450,7 +651,19 @@
                 return values;
             }
 
-            #createJsonData(v) { return { _id: { $oid: crypto.getRandomValues(new Uint8Array(12)).reduce((s, b) => s + b.toString(16).padStart(2, '0'), '') }, name: v.product_description || "Untitled", category: v.category || "General", ai_type: "flux", prompt_parameters: { ...v }, prompt_template: v.prompt_template || "", createdAt: { $date: new Date().toISOString() }, updatedAt: { $date: new Date().toISOString() }, _class: "com.vidaxl.platformai.image.generation.domain.ImageGenerationPrompt" }; }
+            #createJsonData(v) { 
+                return { 
+                    _id: { $oid: crypto.getRandomValues(new Uint8Array(12)).reduce((s, b) => s + b.toString(16).padStart(2, '0'), '') }, 
+                    name: v.product_description || "Untitled", 
+                    category: v.category || "General", 
+                    ai_type: "flux", 
+                    prompt_parameters: { ...v }, 
+                    prompt_template: v.prompt_template || "", 
+                    createdAt: { $date: new Date().toISOString() }, 
+                    updatedAt: { $date: new Date().toISOString() }, 
+                    _class: "com.vidaxl.platformai.image.generation.domain.ImageGenerationPrompt" 
+                }; 
+            }
             
             #createTextPromptAndHighlight(formData) {
                 let cleanText = formData.prompt_template || '';
@@ -464,39 +677,63 @@
                     
                     cleanText = cleanText.replace(placeholderRegex, value);
                     
-                    const colorClass = this.#variableColors[key] || '';
+                    const colorClass = this.#variableColors[key] || 'var-custom';
                     const escapedValue = this.#escapeHtml(value).replace(/\n/g, '<br>');
                     const highlightedValueSpan = `<span class="${colorClass}">${escapedValue}</span>`;
                     highlightedHtml = highlightedHtml.replace(placeholderRegex, highlightedValueSpan);
                 }
                 
+                this.#customVariables.forEach((value, key) => {
+                    const placeholderRegex = new RegExp(this.#escapeRegExp(`<${key}>`), 'g');
+                    
+                    cleanText = cleanText.replace(placeholderRegex, value);
+                    
+                    const escapedValue = this.#escapeHtml(value).replace(/\n/g, '<br>');
+                    const highlightedValueSpan = `<span class="var-custom">${escapedValue}</span>`;
+                    highlightedHtml = highlightedHtml.replace(placeholderRegex, highlightedValueSpan);
+                });
+                
                 this.#state.cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
                 this.#safeGetElement('text-output').innerHTML = highlightedHtml.replace(/\n/g, '<br>');
             }
 
-            #resetOutputs() { this.#state.cleanJSON = ''; this.#state.cleanText = ''; const jsonOutput = this.#safeGetElement('json-output'); const textOutput = this.#safeGetElement('text-output'); if (jsonOutput) jsonOutput.textContent = 'Error generating output.'; if (textOutput) textOutput.textContent = 'Error generating output.'; }
+            #resetOutputs() { 
+                this.#state.cleanJSON = ''; this.#state.cleanText = ''; 
+                const jsonOutput = this.#safeGetElement('json-output'); 
+                const textOutput = this.#safeGetElement('text-output'); 
+                if (jsonOutput) jsonOutput.textContent = 'Error generating output.'; 
+                if (textOutput) textOutput.textContent = 'Error generating output.';
+                // --- UX FIX: Disable buttons on error/reset ---
+                this.#updateActionButtonsState(false);
+            }
+
             #fallbackCopyToClipboard(text) { const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;'; ta.readOnly = true; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) { throw new Error('Fallback copy failed.'); } finally { document.body.removeChild(ta); } }
             #generateFilename(type) { let filename = (this.#state.currentProductDescription || 'prompt').toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '_').substring(0, 50) || 'prompt'; return `${filename}.${type === 'json' ? 'json' : 'txt'}`; }
             
             #loadDraft() {
                 const savedDraft = localStorage.getItem(this.#config.STORAGE_KEY);
-                // Start with a fresh copy of the default values.
                 let dataToLoad = { ...this.#config.DEFAULT_VALUES };
 
                 if (savedDraft) {
                     try {
                         const parsedDraft = this.#secureJsonParse(savedDraft);
-                        // Merge the saved data over the defaults.
+                        
+                        if (parsedDraft.customVariables) {
+                            this.#customVariables.clear();
+                            Object.entries(parsedDraft.customVariables).forEach(([key, value]) => {
+                                this.#customVariables.set(key, value);
+                            });
+                            this.#renderCustomVariables();
+                            delete parsedDraft.customVariables;
+                        }
+                        
                         dataToLoad = { ...dataToLoad, ...parsedDraft };
                     } 
                     catch (e) {
-                        // If parsing fails, the saved data is corrupt. Remove it.
                         localStorage.removeItem(this.#config.STORAGE_KEY);
                     }
                 }
 
-                // **CRITICAL FIX:** After loading, if the prompt template is empty for any reason,
-                // restore it from the default configuration. This prevents a blank template.
                 if (!dataToLoad.prompt_template) {
                     dataToLoad.prompt_template = this.#config.DEFAULT_VALUES.prompt_template;
                 }
@@ -507,17 +744,43 @@
             #setupEventListeners() {
                 const signal = this.#abortController.signal;
                 const debouncedGenerate = this.#debounce(() => this.#generateOutput(), this.#config.AUTO_GENERATE_DELAY);
+                
                 document.querySelectorAll('input, select, textarea').forEach(input => {
-                    if (input.id === 'json_import') return;
+                    if (input.id === 'json_import' || input.id === 'new-var-name' || input.id === 'new-var-value') return;
                     ['input', 'change'].forEach(type => input.addEventListener(type, () => { this.#clearMessages(); debouncedGenerate(); }, { signal }));
                 });
+                
                 const buttonActions = { 
-                    'btn-import-json': () => this.#importFromJson(), 'btn-clear-import': () => this.#clearJsonImport(),
+                    'btn-import-json': () => this.#importFromJson(), 
+                    'btn-clear-import': () => this.#clearJsonImport(),
                     'btn-reset-form': () => this.#resetForm(),
-                    'btn-copy-json': () => this.#copyToClipboard('json'), 'btn-copy-text': () => this.#copyToClipboard('text'),
-                    'btn-download-json': () => this.#downloadFile('json'), 'btn-download-txt': () => this.#downloadFile('text')
+                    'btn-copy-json': () => this.#copyToClipboard('json'), 
+                    'btn-copy-text': () => this.#copyToClipboard('text'),
+                    'btn-download-json': () => this.#downloadFile('json'), 
+                    'btn-download-txt': () => this.#downloadFile('text'),
+                    'btn-add-variable': () => this.#addCustomVariable()
                 };
-                for (const id in buttonActions) this.#safeGetElement(id)?.addEventListener('click', buttonActions[id], { signal });
+                
+                for (const id in buttonActions) {
+                    const element = this.#safeGetElement(id);
+                    if (element) {
+                        element.addEventListener('click', buttonActions[id], { signal });
+                    }
+                }
+                
+                const newVarNameInput = this.#safeGetElement('new-var-name');
+                const newVarValueInput = this.#safeGetElement('new-var-value');
+                
+                if (newVarNameInput && newVarValueInput) {
+                    [newVarNameInput, newVarValueInput].forEach(input => {
+                        input.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                this.#addCustomVariable();
+                            }
+                        }, { signal });
+                    });
+                }
             }
         }
         
@@ -528,11 +791,9 @@
             } catch (error) {
                 console.error('Failed to initialize app:', error);
                 document.body.innerHTML = `<div style="padding:20px;text-align:center;color:red;background-color:#fdd;border-radius:8px;margin:20px;"><h2>Application Error</h2><p>Failed to load. Please refresh.</p><p style="font-size:12px;color:#666">Error: ${error.message}</p></div>`;
-                // Stop execution if initialization fails
                 return;
             }
 
-            // Setup global listeners that depend on the app instance
             window.addEventListener('error', (e) => {
                 console.error('Global error:', e.error);
                 if (appInstance && typeof appInstance.showMessage === 'function') {
